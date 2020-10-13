@@ -334,39 +334,3 @@ int rubro_printList(Rubro *list, int len)
 	}
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- *
-int info_calculateMax(int counter, int* max, int i, int* index)
-{
-	int result = ERROR;
-
-	if(counter > 0 && max != NULL && i >= 0 && index != NULL)
-	{
-		printf("\nVALOR CONTADORr: %d",counter);
-		if (counter > *max || i == 0)
-		{
-			*max = counter;
-			*index = i;
-			result=SUCCESS;
-
-		} else if (counter == *max) {
-			result=ERROR;
-		}
-	}
-
-	return result;
-}
-*/
-

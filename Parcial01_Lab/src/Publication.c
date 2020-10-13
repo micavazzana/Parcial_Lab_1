@@ -198,7 +198,7 @@ int publi_remove(Publication *list, int len, Client* listClient, int lenClient, 
 int publi_printOne(Publication listPubli)
 {
 	int result = ERROR;
-	char state[8];
+	char state[10];
 
 	if (listPubli.isEmpty == FALSE)
 	{
@@ -427,3 +427,84 @@ int publi_qtyPausedPublications(Publication *list, int len)
 	}
 	return result;
 }
+
+
+/**
+ * \brief Modifys data from publications. Allows the user to decide which field to change.
+ * \param list Publication* Pointer to array of publications
+ * \param len int Array publications length
+ * \param listClient Client* Pointer to array of clients
+ * \param lenClient int Array clients length
+ * \return Return (-1) Error - if Invalid length or NULL pointer or if can't find a publication
+ * 				  (-2) Error - if Id Client could not be changed
+ * 				  (-3) Error - if rubro could not be changed
+ * 				  (-4) Error - if advertisement Text could not be changed
+ * 				  (0) if Ok
+ */
+int publi_modify(Publication* list, int len,Client* listClient, int lenClient)
+{
+	int result = ERROR;
+	int index;
+	Publication bufferPubli;
+	int option;
+
+	if (list != NULL && len > 0)
+	{
+		if (publi_printList(list,len) == SUCCESS
+			&& utn_getNumber(&bufferPubli.idPublication,"\nIngrese el id de la publicacion que quiere modificar: ","\nError!",0,99999,5) == SUCCESS
+			&& publi_findById(list, len, bufferPubli.idPublication)!= ERROR)
+		{
+			index = publi_findById(list, len, bufferPubli.idPublication);
+			if(list[index].isEmpty == FALSE)
+			{
+				do {
+					if (utn_getNumber(&option,
+							"\n\nIngrese una opcion: "
+							"\n1.Modificar Id Cliente "
+							"\n2.Modificar Rubro "
+							"\n3.Modificar Texto del Aviso "
+							"\n4.Volver al menu principal\n",
+							"Error, elija una opcion valida\n", 1, 4, 3) == SUCCESS)
+					{
+						switch (option)
+						{
+						case 1:
+							if (cli_printList(listClient,lenClient) == SUCCESS
+									&& utn_getNumber(&bufferPubli.idClient,"Ingrese un nuevo id de cliente a quien asignar la publicacion: ","\nError!",0,99999, 3) == SUCCESS) {
+								list[index].idClient = bufferPubli.idClient;
+								result = SUCCESS;
+							} else {
+								result = -2;
+							}
+							break;
+						case 2:
+							if (utn_getNumber(&bufferPubli.rubro,"Ingrese un nuevo rubro: ","\nError!",0,99999, 3) == SUCCESS) {
+								list[index].rubro = bufferPubli.rubro;
+								result = SUCCESS;
+							} else {
+								result = -3;
+							}
+							break;
+						case 3:
+							if (utn_getAlphanumeric(bufferPubli.advertisementText,ADV_LEN,"\nIngrese un nuevo texto para el aviso: \n","\nError!",3) == SUCCESS) {
+								strncpy(list[index].advertisementText, bufferPubli.advertisementText, ADV_LEN);
+								result = SUCCESS;
+							} else {
+								result = -4;
+							}
+							break;
+						}//fin switch
+					} else {
+						printf("Se acabaron sus reintentos, vuelva a ingresar");
+					}
+					if(result<0)
+					{
+						break;
+					}
+				} while (option != 4);
+			}
+		}
+	}
+	return result;
+}
+
