@@ -304,7 +304,7 @@ int publi_isAnyData(Publication *list, int len)
 int publi_hardCodeData(Publication* list)
 {
 	int result = ERROR;
-	int idClient[] = {1,2,3,4,8,3,7,10,5,3,9,6,11};
+	int idClient[] = {1,2,3,4,8,2,7,2,5,10,9,6,11};
 	int rubro[] = {11,11,22,11,22,33,55,33,44,44,55,66,77};
 	char advertisementText[][ADV_LEN] = {"Telefonos baratos","Eliminacion de monstruos","Se busca radio con antena",
 			"Carpas de Will, la mejor proteccion","Buenas vibras spa","La buena rula","Comida casera","Jardineria, corto su pasto",

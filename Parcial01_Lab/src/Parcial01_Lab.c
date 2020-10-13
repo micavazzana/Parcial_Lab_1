@@ -115,7 +115,8 @@ int main(void) {
 					}
 					break;
 				case 7:
-					clientPublication_printClientAndPublications(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
+					info_printClientWithQtyPublicationsActives(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
+					//clientPublication_printClientAndPublications(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
 					break;
 				case 8:
 					info_subMenu(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);

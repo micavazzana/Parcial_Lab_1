@@ -17,6 +17,7 @@ typedef struct {
 int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient, int lenClient);
 int info_findIndexClientWithMorePublications(Publication *listPublication, int lenPubli, Client* listClient, int lenClient);
 int info_RubroWithMorePublications(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro);
+int info_printClientWithQtyPublicationsActives(Publication *listPublication, int lenPubli, Client* listClient, int lenClient);
 
 int rubro_init(Rubro *listRubro, int lenRubro);
 int rubro_generateList(Publication *listPublication, int lenPublication,Rubro *listRubro, int lenRubro);
