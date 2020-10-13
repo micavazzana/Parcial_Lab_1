@@ -38,7 +38,7 @@ int main(void) {
 					"\n6. Reanudar publicacion"
 					"\n7. Imprimir clientes"
 					"\n8. Informar"
-					"\n9. SALIR\n\n","\nError! elija una opcion valida",1,9,3)==SUCCESS)
+					"\n9. SALIR\n\n","\nError! elija una opcion valida",1,9,5)==SUCCESS)
 			{
 				switch(option)
 				{
@@ -115,11 +115,19 @@ int main(void) {
 					}
 					break;
 				case 7:
+					if(publi_isAnyData(listPublication, QTY_PUBLICATION) && cli_isAnyData(listClient, QTY_CLIENT)) {
 					info_printClientWithQtyPublicationsActives(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
 					//clientPublication_printClientAndPublications(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
+					}  else {
+					printf("\nDebe cargar datos primero");
+					}
 					break;
 				case 8:
-					info_subMenu(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
+					if (publi_isAnyData(listPublication, QTY_PUBLICATION) && cli_isAnyData(listClient, QTY_CLIENT)) {
+						info_subMenu(listPublication, QTY_PUBLICATION, listClient, QTY_CLIENT);
+					} else {
+						printf("\nDebe cargar datos primero");
+					}
 					break;
 				case 9:
 					printf("\nHasta luego!");

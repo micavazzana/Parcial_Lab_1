@@ -54,6 +54,8 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 						cli_printOne(listClient[index]);
 					} else if (index == -2) {
 						printf("Hay mas de un cliente con la misma cantidad de avisos");
+					} else {
+						printf("Error");
 					}
 				}
 				break;
@@ -73,6 +75,8 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 						printf("\nEl numero de rubro con mas publicaciones es: %d",bufferRubro);
 					} else if (bufferRubro == -2) {
 						printf("Hay mas de un rubro con la misma cantidad de avisos");
+					}else {
+						printf("Error");
 					}
 				}
 				break;
