@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "Client.h"
 #include "inputs.h"
 
@@ -150,7 +151,7 @@ int cli_modify(Client* list, int len)
 	if (list != NULL && len > 0)
 	{
 		if (cli_printList(list,len) == SUCCESS
-			&& utn_getNumber(&bufferClient.idClient,"\nIngrese el id del cliente que quiere modificar: ","\nError!",0,99999,5) == SUCCESS
+			&& utn_getNumber(&bufferClient.idClient,"\nIngrese el id del cliente que quiere modificar: ","\nError!",0,INT_MAX,5) == SUCCESS
 			&& cli_findById(list, len, bufferClient.idClient)!= ERROR)
 		{
 			index = cli_findById(list, len, bufferClient.idClient);

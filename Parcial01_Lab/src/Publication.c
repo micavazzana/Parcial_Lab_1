@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include "inputs.h"
 #include "Publication.h"
 #define ACTIVE 1
@@ -94,9 +95,9 @@ int publi_loadAndAddData(Publication *listPubli, int lenPubli, Client *listClien
 	{
 		index = publi_findEmptyIndex(listPubli, lenPubli);
 		if (cli_printList(listClient, lenClient) == SUCCESS
-				&& utn_getNumber(&bufferPubli.idClient, "\nIngrese el id del cliente para realizar la publicacion: ", "\nError", 0, 99999, 3) == SUCCESS
+				&& utn_getNumber(&bufferPubli.idClient, "\nIngrese el id del cliente para realizar la publicacion: ", "\nError", 0, INT_MAX, 3) == SUCCESS
 				&& cli_findById(listClient, lenClient, bufferPubli.idClient)!=ERROR
-				&& utn_getNumber(&bufferPubli.rubro,"\nIngrese numero de rubro: ","\nError",0,9999,3) == SUCCESS
+				&& utn_getNumber(&bufferPubli.rubro,"\nIngrese numero de rubro: ","\nError",0,INT_MAX,3) == SUCCESS
 				&& utn_getAlphanumeric(bufferPubli.advertisementText,ADV_LEN,"\nIngrese el texto del aviso: \n","\nError!",3) == SUCCESS)
 		{
 			bufferPubli.isEmpty = FALSE;
@@ -451,7 +452,7 @@ int publi_modify(Publication* list, int len,Client* listClient, int lenClient)
 	if (list != NULL && len > 0)
 	{
 		if (publi_printList(list,len) == SUCCESS
-			&& utn_getNumber(&bufferPubli.idPublication,"\nIngrese el id de la publicacion que quiere modificar: ","\nError!",0,99999,5) == SUCCESS
+			&& utn_getNumber(&bufferPubli.idPublication,"\nIngrese el id de la publicacion que quiere modificar: ","\nError!",0,INT_MAX,5) == SUCCESS
 			&& publi_findById(list, len, bufferPubli.idPublication)!= ERROR)
 		{
 			index = publi_findById(list, len, bufferPubli.idPublication);
@@ -470,7 +471,7 @@ int publi_modify(Publication* list, int len,Client* listClient, int lenClient)
 						{
 						case 1:
 							if (cli_printList(listClient,lenClient) == SUCCESS
-									&& utn_getNumber(&bufferPubli.idClient,"Ingrese un nuevo id de cliente a quien asignar la publicacion: ","\nError!",0,99999, 3) == SUCCESS) {
+									&& utn_getNumber(&bufferPubli.idClient,"Ingrese un nuevo id de cliente a quien asignar la publicacion: ","\nError!",0,INT_MAX, 3) == SUCCESS) {
 								list[index].idClient = bufferPubli.idClient;
 								result = SUCCESS;
 							} else {
@@ -478,7 +479,7 @@ int publi_modify(Publication* list, int len,Client* listClient, int lenClient)
 							}
 							break;
 						case 2:
-							if (utn_getNumber(&bufferPubli.rubro,"Ingrese un nuevo rubro: ","\nError!",0,99999, 3) == SUCCESS) {
+							if (utn_getNumber(&bufferPubli.rubro,"Ingrese un nuevo rubro: ","\nError!",0,INT_MAX, 3) == SUCCESS) {
 								list[index].rubro = bufferPubli.rubro;
 								result = SUCCESS;
 							} else {

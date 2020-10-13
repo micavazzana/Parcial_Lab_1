@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #define ACTIVE 1
 #define PAUSED 0
 
@@ -29,7 +30,7 @@ int client_removeClient(Client* listClient,int lenClient, Publication* listPubli
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
 		if (cli_printList(listClient, lenClient) == SUCCESS
-				&& utn_getNumber(&bufferId, "\n\nIngrese el id del cliente que quiere eliminar: ", "\nError", 0, 9999, 3) == SUCCESS
+				&& utn_getNumber(&bufferId, "\n\nIngrese el id del cliente que quiere eliminar: ", "\nError", 0, INT_MAX, 3) == SUCCESS
 				&& cli_findById(listClient, lenClient, bufferId) != ERROR)
 		{
 			if (publi_printListById(listPublication, lenPubli, bufferId) == SUCCESS
@@ -64,7 +65,7 @@ int publication_pause(Client* listClient,int lenClient, Publication* listPublica
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
 		if( publi_printList(listPublication, lenPubli) == SUCCESS
-				&& utn_getNumber(&bufferId, "\n\nIngrese el id de la publicacion que quiere pausar: ", "\nError", 0, 9999, 3) == SUCCESS
+				&& utn_getNumber(&bufferId, "\n\nIngrese el id de la publicacion que quiere pausar: ", "\nError", 0, INT_MAX, 3) == SUCCESS
 				&& publi_isActive(listPublication,lenPubli,bufferId)
 				&& client_printClientInformation(listPublication,lenPubli,listClient,lenClient,bufferId) == SUCCESS
 				&& utn_getName(bufferAnswer,10,"\n\nEsta seguro de que quiere pausar esta publicacion? Debe ingresar 'Si' para proceder: ", "\nError,ingrese una respuesta valida.",3) == SUCCESS
@@ -95,7 +96,7 @@ int publication_reactivate(Client* listClient,int lenClient, Publication* listPu
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
 		if( publi_printList(listPublication, lenPubli) == SUCCESS
-				&& utn_getNumber(&bufferId, "\n\nIngrese el id de la publicacion que quiere activar: ", "\nError", 0, 9999, 3) == SUCCESS
+				&& utn_getNumber(&bufferId, "\n\nIngrese el id de la publicacion que quiere activar: ", "\nError", 0, INT_MAX, 3) == SUCCESS
 				&& publi_isActive(listPublication,lenPubli,bufferId) == FALSE
 				&& client_printClientInformation(listPublication,lenPubli,listClient,lenClient,bufferId) == SUCCESS
 				&& utn_getName(bufferAnswer,10,"\n\nEsta seguro de que quiere activar esta publicacion? Debe ingresar 'Si' para proceder: ", "\nError,ingrese una respuesta valida.",3) == SUCCESS
