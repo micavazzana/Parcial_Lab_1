@@ -30,6 +30,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 	Rubro listRubro[LEN_RUBRO];
 	int bufferRubro;
 	int isListRubroCreated;
+	int qtyAds;
 
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
@@ -45,13 +46,14 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 			switch(option)
 			{
 			case 1:
-				if(info_findIndexClientWithMorePublications(listPublication,lenPubli,listClient,lenClient)!=ERROR)
+				if(info_findIndexClientWithMorePublications(listPublication,lenPubli,listClient,lenClient,&qtyAds)!=ERROR)
 				{
-					index = info_findIndexClientWithMorePublications(listPublication,lenPubli,listClient,lenClient);
+					index = info_findIndexClientWithMorePublications(listPublication,lenPubli,listClient,lenClient,&qtyAds);
 					if(index>=0)
 					{
 						printf("\nEl cliente con mas avisos es: \n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
 						cli_printOne(listClient[index]);
+						printf("\nTiene %d avisos",qtyAds);
 					} else if (index == -2) {
 						printf("Hay mas de un cliente con la misma cantidad de avisos");
 					} else {
@@ -59,11 +61,12 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 					}
 				}
 				break;
-			case 2:
+			case 2://podria imprimir ademas cuales son las publicaciones que estan pausadas
 				pausedPublication = publi_qtyPausedPublications(listPublication, lenPubli);
 				if(pausedPublication != ERROR)
 				{
 					printf("La cantidad de avisos pausados es: %d",pausedPublication);
+					//publi_printOne(listPublication[]);
 				}
 				break;
 			case 3:
@@ -98,7 +101,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
  * 				  or number of index in which the client with more publications is
  * 				  (-2) if it can't find a client with more publications than other
  */
-int info_findIndexClientWithMorePublications(Publication *listPublication, int lenPubli, Client* listClient, int lenClient)
+int info_findIndexClientWithMorePublications(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int* qtyAds)
 {
 	int result = ERROR;
 	int counter = 0;
@@ -129,6 +132,7 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
 				counter = 0;
 			}
 		}
+		*qtyAds = max;
 	}
 	return result;
 }
@@ -196,7 +200,7 @@ int info_RubroWithMorePublications(Publication *listPublication, int lenPubli, R
 		{
 			if(listRubro[i].isEmpty == FALSE)
 			{
-				for (j = 0; j < lenPubli; j++)
+				for (j = 0; j < lenPubli; j++)//atomizar los doble for en una func
 				{
 					if(listPublication[j].rubro == listRubro[i].rubro)
 					{

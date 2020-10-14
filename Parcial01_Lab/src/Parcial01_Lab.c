@@ -98,7 +98,7 @@ int main(void) {
 						printf("\nDebe cargar clientes primero.\n");
 					}
 					break;
-				case 5:
+				case 5: //esto de pausar puede ser como el sort, pasar por parametro un valor para el cambio de estado
 					if(publi_isAnyData(listPublication, QTY_PUBLICATION) && publication_pause(listClient, QTY_CLIENT,listPublication, QTY_PUBLICATION) == SUCCESS)
 					{
 						printf("Publicacion pausada con exito");

@@ -36,7 +36,4 @@ int publi_restartPublication(Publication *list, int len, int idPubli);
 int publi_qtyPausedPublications(Publication *list, int len);
 int publi_modify(Publication* list, int len,Client* listClient, int lenClient);
 
-//modificar
-//ordenar
-
 #endif /* PUBLICATION_H_ */

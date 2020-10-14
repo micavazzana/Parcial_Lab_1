@@ -26,6 +26,7 @@ int client_removeClient(Client* listClient,int lenClient, Publication* listPubli
 	int result = ERROR;
 	int bufferId;
 	char bufferAnswer[10];
+	int bufferRemovePubli;
 
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
@@ -36,11 +37,13 @@ int client_removeClient(Client* listClient,int lenClient, Publication* listPubli
 			if (publi_printListById(listPublication, lenPubli, bufferId) == SUCCESS
 					&& utn_getName(bufferAnswer, 10, "\n\nSe eliminaran los avisos aqui mostrados ademas del cliente. "
 							"Debe ingresar 'Si' para proceder con la baja: ", "\nError,ingrese una respuesta valida.", 3) == SUCCESS
-					&& strncasecmp(bufferAnswer, "si", 10) == 0
-					&& publi_remove(listPublication, lenPubli, listClient, lenClient, bufferId) == SUCCESS
-					&& cli_remove(listClient, lenClient, bufferId) == SUCCESS)
+					&& strncasecmp(bufferAnswer, "si", 10) == 0)
 			{
-				result = SUCCESS;
+				bufferRemovePubli = publi_remove(listPublication, lenPubli, listClient, lenClient, bufferId);
+				if((bufferRemovePubli == SUCCESS || bufferRemovePubli  == -2) && cli_remove(listClient, lenClient, bufferId) == SUCCESS)
+				{
+					result = SUCCESS;
+				}
 			}
 		}
 	}

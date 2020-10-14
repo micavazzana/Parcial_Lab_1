@@ -170,7 +170,9 @@ int publi_findById(Publication *list, int len, int id)
  * \param listClient Client* Pointer to array of clients
  * \param lenClient Array client length
  * \param id int, id searched
- * \return int Return (-1) if Error [Invalid length or NULL pointer or if can't find a publication with that client id] - (0) if Ok
+ * \return int Return (-1) if Error [Invalid length or NULL pointer or if can't find a publication with that client id] -
+ * 					  (0) if Ok
+ * 					  (-2) if it can't find the id client
  */
 int publi_remove(Publication *list, int len, Client* listClient, int lenClient, int id)
 {
@@ -185,6 +187,8 @@ int publi_remove(Publication *list, int len, Client* listClient, int lenClient, 
 			{
 				list[i].isEmpty = TRUE;
 				result = SUCCESS;
+			} else {
+				result = -2;
 			}
 		}
 	}
