@@ -156,7 +156,6 @@ int publication_reactivate(Client* listClient,int lenClient, Publication* listPu
  * \param lenClient int Array clients length
  * \param list Publication* Pointer to array of publications
  * \param lenPubli int Array publications length
- * \param id int id needed for finding the index of publications
  * \return int Return (-1) if Error - Invalid length or NULL pointer (from both arrays)
  * 					  (0) if Ok
  */
@@ -164,9 +163,7 @@ int clientPublication_printClientAndPublications(Publication *listPublication, i
 {
 	int result = ERROR;
 	int i;
-	int j;
-	int hasPublications;
-	int counter = 0;
+	int counter;
 
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
@@ -174,28 +171,48 @@ int clientPublication_printClientAndPublications(Publication *listPublication, i
 		{
 			if (listClient[i].isEmpty == FALSE)
 			{
-				hasPublications = FALSE;
 				printf("\n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE",	"APELLIDO", "CUIT");
 				cli_printOne(listClient[i]);
-				printf("\n\n%10s %15s %15s %35s %20s\n", "ID PUBLI", "RUBRO", "ID CLIENTE", "TEXTO AVISO", "ESTADO");
-				for (j = 0; j < lenPubli; j++)
-				{
-					if (listPublication[j].isEmpty == FALSE	&& listPublication[j].state == ACTIVE && listPublication[j].idClient == listClient[i].idClient)
-					{
-						publi_printOne(listPublication[j]);
-						hasPublications = TRUE;
-						counter++;
-					}
-				}
-				if (hasPublications) {
+				if (clientPublication_printActivePublicationsById(listPublication, lenPubli, listClient[i].idClient, &counter)) {
 					printf("\nCantidad de avisos activos: %d\n", counter);
 				} else {
 					printf("\nNo tiene avisos");
 				}
-				counter = 0;
 			}
 		}
 		result = SUCCESS;
+	}
+	return result;
+}
+
+
+/**
+ * brief Prints active publications and counts how many of them there are
+ * \param list Publication* Pointer to array of publications
+ * \param lenPubli int Array publications length
+ * \param id int id searched
+ * \return int Return (0) FALSE if could't find a publication or Error [Invalid length or NULL pointer]
+ * 					  (1) TRUE if Ok - Active publications were found
+ */
+int clientPublication_printActivePublicationsById(Publication *listPublication, int lenPubli, int id, int* qty)
+{
+	int result = FALSE;
+	int j;
+	int counter = 0;
+
+	if (listPublication != NULL && lenPubli > 0 && id > 0 && qty != NULL)
+	{
+		printf("\n\n%10s %15s %15s %35s %20s\n", "ID PUBLI", "RUBRO", "ID CLIENTE", "TEXTO AVISO", "ESTADO");
+		for (j = 0; j < lenPubli; j++)
+		{
+			if (listPublication[j].isEmpty == FALSE	&& listPublication[j].state == ACTIVE && listPublication[j].idClient == id)
+			{
+				publi_printOne(listPublication[j]);
+				result = TRUE;
+				counter++;
+			}
+		}
+		*qty = counter;
 	}
 	return result;
 }

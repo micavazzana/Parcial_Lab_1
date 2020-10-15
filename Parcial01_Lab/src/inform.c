@@ -265,7 +265,7 @@ static int rubroIsInList(Rubro *listRubro, int lenRubro, int rubro)
 	{
 		if (listRubro[i].isEmpty == FALSE && listRubro[i].rubro == rubro)
 		{
-			result = TRUE;
+			result = TRUE; //alredy exists
 			break;
 		}
 	}
