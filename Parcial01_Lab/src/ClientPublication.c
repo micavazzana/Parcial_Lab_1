@@ -34,8 +34,12 @@ int client_removeClient(Client* listClient,int lenClient, Publication* listPubli
 				&& utn_getNumber(&bufferId, "\n\nIngrese el id del cliente que quiere eliminar: ", "\nError", 0, INT_MAX, 3) == SUCCESS
 				&& cli_findById(listClient, lenClient, bufferId) != ERROR)
 		{
-			if (publi_printListById(listPublication, lenPubli, bufferId) == SUCCESS
-					&& utn_getName(bufferAnswer, 10, "\n\nSe eliminaran los avisos aqui mostrados ademas del cliente. "
+			if(publi_findByIdClient(listPublication,lenPubli,bufferId) != ERROR) {
+				publi_printListById(listPublication, lenPubli, bufferId);
+			} else {
+				printf("\nNo tiene publicaciones");
+			}
+			if (utn_getName(bufferAnswer, 10, "\n\nDesea borrar? Se eliminaran los avisos que el cliente tenga. "
 							"Debe ingresar 'Si' para proceder con la baja: ", "\nError,ingrese una respuesta valida.", 3) == SUCCESS
 					&& strncasecmp(bufferAnswer, "si", 10) == 0)
 			{

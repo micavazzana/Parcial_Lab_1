@@ -11,7 +11,6 @@
 #include "inputs.h"
 #include "Publication.h"
 
-
 /**
  * \brief To indicate that all position in the array are empty,
  * 		  this function put the flag (isEmpty) in TRUE in all position of the array
@@ -178,7 +177,7 @@ int publi_remove(Publication *list, int len, Client* listClient, int lenClient, 
 	int result = ERROR;
 	int i;
 
-	if (list != NULL && len > 0 && listClient != NULL && lenClient > 0 && id > 0 && cli_findById(listClient,lenClient,id) != ERROR && publi_findByIdClient(list,len,id) != ERROR)
+	if (list != NULL && len > 0 && listClient != NULL && lenClient > 0 && id > 0)
 	{
 		for (i = 0; i < len; i++)
 		{
@@ -309,7 +308,7 @@ int publi_hardCodeData(Publication* list)
 {
 	int result = ERROR;
 	int idClient[] = {1,2,3,4,8,2,7,5,2,10,9,6,6};
-	int rubro[] = {11,11,22,11,22,33,55,33,44,44,55,66,77};
+	int rubro[] = {11,11,22,11,22,33,55,33,44,44,55,66,22};
 	char advertisementText[][ADV_LEN] = {"Telefonos baratos","Eliminacion de monstruos","Se busca radio con antena",
 			"Carpas de Will, la mejor proteccion","Buenas vibras spa","La buena rula","Comida casera","Jardineria, corto su pasto",
 			"Compra luces de todos los colores","Nos comunicamos con el otro lado","Foto pro, la mejor foto de tu boda","Defensa de su hogar","Cuidado de niños"};

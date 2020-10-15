@@ -24,7 +24,6 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 	int result = ERROR;
 	int option;
 	int index;
-	//int pausedPublication;
 	Rubro listRubro[LEN_RUBRO];
 	int bufferRubro;
 	int isListRubroCreated;
@@ -60,9 +59,10 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 				}
 				break;
 			case 2:
-				if(publi_qtyPublications(listPublication, lenPubli, &qtyAds,PAUSED) == SUCCESS && qtyAds > 0 && publi_printPublicationsByState(listPublication, lenPubli,PAUSED) == SUCCESS)
+				if(publi_qtyPublications(listPublication, lenPubli, &qtyAds,PAUSED) == SUCCESS && qtyAds > 0)
 				{
 					printf("\nLa cantidad de avisos pausados es: %d",qtyAds);
+					publi_printPublicationsByState(listPublication, lenPubli,PAUSED);
 				} else if(qtyAds == 0) {
 					printf("\nNo hay avisos pausados");
 				}
