@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "inform.h"
-#define ACTIVE 1
-#define PAUSED 0
 #define LEN_RUBRO 1000
 
 /**
@@ -26,7 +24,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 	int result = ERROR;
 	int option;
 	int index;
-	int pausedPublication;
+	//int pausedPublication;
 	Rubro listRubro[LEN_RUBRO];
 	int bufferRubro;
 	int isListRubroCreated;
@@ -61,12 +59,12 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 					}
 				}
 				break;
-			case 2://podria imprimir ademas cuales son las publicaciones que estan pausadas // lala
-				pausedPublication = publi_qtyPausedPublications(listPublication, lenPubli);
-				if(pausedPublication != ERROR)
+			case 2:
+				if(publi_qtyPublications(listPublication, lenPubli, &qtyAds,PAUSED) == SUCCESS && qtyAds > 0 && publi_printPublicationsByState(listPublication, lenPubli,PAUSED) == SUCCESS)
 				{
-					printf("La cantidad de avisos pausados es: %d",pausedPublication);
-					//publi_printOne(listPublication[]);
+					printf("\nLa cantidad de avisos pausados es: %d",qtyAds);
+				} else if(qtyAds == 0) {
+					printf("\nNo hay avisos pausados");
 				}
 				break;
 			case 3:
@@ -92,12 +90,12 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 }
 
 /**
- * \brief Checks which client has more publications
+ * \brief Finds the index from client that has more publications
  * \param listPublication Publication* Pointer to array of publications
  * \param lenPublication int Array publications length
  * \param listClient Client* Pointer to array of clients
  * \param lenClient Array client length
- * \param qtyAds int* Pointer where to leave the maximum number of publications found
+ * \param qtyAds int* Pointer to where it will leave the maximum number of publications found
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
  * 				  or number of index in which the client with more publications is
  * 				  (-2) if it can't find a client with more publications than other
@@ -115,7 +113,7 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
 		{
 			if(listClient[i].isEmpty == FALSE)
 			{
-				qty = qtyPublicationsByClient(listPublication, lenPubli, listClient, lenClient,i);
+				qty = info_qtyPublicationsByClient(listPublication, lenPubli, listClient, lenClient,i);
 				if (qty > max || i == 0)
 				{
 					max = qty;
@@ -136,11 +134,11 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
  * \param lenPublication int Array publications length
  * \param listClient Client* Pointer to array of clients
  * \param lenClient Array client length
- * \param indexClient int index of the client (that will allow to know his number of publications)
+ * \param indexClient int index of the client
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
  * 				  or number of publications counted
  */
-int qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* listClient, int lenClient,int indexClient)
+int info_qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* listClient, int lenClient,int indexClient)
 {
 	int result = ERROR;
 	int counter = 0;
@@ -161,7 +159,7 @@ int qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* 
 }
 
 /**
- * \brief Checks which rubro has more publications
+ * \brief Finds rubro number with more publications
  * \param listPublication Publication* Pointer to array of publications
  * \param lenPublication int Array publications length
  * \param listRubro Rubro* Pointer to array of rubros
@@ -183,7 +181,7 @@ int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, R
 		{
 			if(listRubro[i].isEmpty == FALSE)
 			{
-				qty = qtyPublicationsSameNumberRubro(listPublication, lenPubli, listRubro, lenRubro,i);
+				qty = info_qtyPublicationsSameNumberRubro(listPublication, lenPubli, listRubro, lenRubro,i);
 				if (qty > max || i == 0)
 				{
 					max = qty;
@@ -197,7 +195,17 @@ int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, R
 	return result;
 }
 
-int qtyPublicationsSameNumberRubro(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro,int indexRubro)
+/**
+ * \brief Counts the quantity of publications with the same rubro number (it controls it by the index received)
+ * \param listPublication Publication* Pointer to array of publications
+ * \param lenPublication int Array publications length
+ * \param listRubro Rubro* Pointer to array of rubros
+ * \param lenRubro int Array rubros length
+ * \param indexRubro int index of the rubro
+ * \return Return (-1) if Error [Invalid length or NULL pointer] -
+ * 				  or number of publications with same rubro number counted
+ */
+int info_qtyPublicationsSameNumberRubro(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro,int indexRubro)
 {
 	int result = ERROR;
 	int counter = 0;

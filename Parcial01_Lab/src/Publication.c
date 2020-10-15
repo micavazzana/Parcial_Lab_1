@@ -10,8 +10,7 @@
 #include <limits.h>
 #include "inputs.h"
 #include "Publication.h"
-#define ACTIVE 1
-#define PAUSED 0
+
 
 /**
  * \brief To indicate that all position in the array are empty,
@@ -363,7 +362,7 @@ int publi_isActive(Publication *list, int len, int id)
  * \param list Publication* Pointer to array of publications
  * \param len int Array length
  * \param id int, id searched
- * \param choice int,
+ * \param choice int, indicates the state ACTIVE or PAUSED
  * \return int Return (-1) if Error [Invalid length or NULL pointer or if can't find a publication] - (0) if Ok
  */
 int publi_pauseOrActivatePublication(Publication *list, int len, int idPubli, int choice)
@@ -390,32 +389,74 @@ int publi_pauseOrActivatePublication(Publication *list, int len, int idPubli, in
 }
 
 /**
- * \brief It counts the quantity of paused publications
+ * \brief It counts the quantity of paused or active publications
  * \param list Publication* Pointer to array of publications
  * \param len int Array length
- * \return int Return (-1) if Error [Invalid length or NULL pointer] -
- * 					   or quantity of paused publications
+ * \param qtyAds *int Pointer to the space where it will save the quantity of publications counted
+ * \param choice int, indicates the state ACTIVE or PAUSED
+ * \return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
  */
-int publi_qtyPausedPublications(Publication *list, int len)
+int publi_qtyPublications(Publication *list, int len, int* qtyAds,int choice)
 {
 	int result = ERROR;
 	int i;
-	int counter=0;
+	int counterPaused = 0;
+	int counterActive = 0;
 
-	if (list != NULL && len > 0)
+	if (list != NULL && len > 0 && qtyAds != NULL && (choice == PAUSED || choice == ACTIVE))
 	{
 		for (i = 0; i < len; i++)
 		{
 			if(list[i].isEmpty == FALSE && list[i].state == PAUSED)
 			{
-				counter++;
+				counterPaused++;
+			}
+			if(list[i].isEmpty == FALSE && list[i].state == ACTIVE)
+			{
+				counterActive++;
 			}
 		}
-		result = counter;
+		if (choice == PAUSED)
+		{
+			*qtyAds = counterPaused;
+		} else {
+			*qtyAds = counterActive;
+		}
+		result = SUCCESS;
 	}
 	return result;
 }
 
+/**
+ * \brief Prints the list of publications by the chosen state
+ * \param list Publication* Pointer to array of publications
+ * \param len int Array length
+ * \param choice int, indicates the state ACTIVE or PAUSED
+ * \return int Return (-1) if Error [Invalid length or NULL pointer] - (0) if Ok
+ */
+int publi_printPublicationsByState(Publication *list, int len,int choice)
+{
+	int result = ERROR;
+	int i;
+
+	if (list != NULL && len > 0 && (choice == PAUSED || choice == ACTIVE))
+	{
+		printf("\n\n%10s %15s %15s %35s %20s\n", "ID PUBLI", "RUBRO", "ID CLIENTE", "TEXTO AVISO", "ESTADO");
+		for (i = 0; i < len; i++)
+		{
+			if(choice == PAUSED && list[i].isEmpty == FALSE && list[i].state == PAUSED)
+			{
+				publi_printOne(list[i]);
+			}
+			if(choice == ACTIVE && list[i].isEmpty == FALSE && list[i].state == ACTIVE)
+			{
+				publi_printOne(list[i]);
+			}
+		}
+		result = SUCCESS;
+	}
+	return result;
+}
 
 /**
  * \brief Modifys data from publications. Allows the user to decide which field to change.

@@ -51,6 +51,38 @@ int client_removeClient(Client* listClient,int lenClient, Publication* listPubli
 }
 
 /**
+ * \brief Prints the information of the client requested
+ * \param list Client* Pointer to array of clients
+ * \param lenClient int Array clients length
+ * \param list Publication* Pointer to array of publications
+ * \param lenPubli int Array publications length
+ * \param id int id needed for finding the index of publications
+ * \return int Return (-1) if Error - Invalid length or NULL pointer (from both arrays) or if can't find a publication or if user chooses not to activate
+ * 					  (0) if Ok
+ */
+int client_printClientInformation(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int id)
+{
+	int result = ERROR;
+	int index;
+
+	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
+	{
+		printf("\nInformacion del cliente: \n");
+		printf("\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
+		for(int i=0;i<lenClient;i++)
+		{
+			index = publi_findById(listPublication,lenPubli,id);
+			if(listPublication[index].idClient == listClient[i].idClient)
+			{
+				cli_printOne(listClient[i]);
+			}
+		}
+		result = SUCCESS;
+	}
+	return result;
+}
+
+/**
  * \brief Requests the user to choose what publication wants to pause, then asks for confirmation and pauses it.
  * \param list Client* Pointer to array of clients
  * \param lenClient int Array clients length
@@ -108,38 +140,6 @@ int publication_reactivate(Client* listClient,int lenClient, Publication* listPu
 		{
 			result = SUCCESS;
 		}
-	}
-	return result;
-}
-
-/**
- * \brief Prints the information of the client requested
- * \param list Client* Pointer to array of clients
- * \param lenClient int Array clients length
- * \param list Publication* Pointer to array of publications
- * \param lenPubli int Array publications length
- * \param id int id needed for finding the index of publications
- * \return int Return (-1) if Error - Invalid length or NULL pointer (from both arrays) or if can't find a publication or if user chooses not to activate
- * 					  (0) if Ok
- */
-int client_printClientInformation(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int id)
-{
-	int result = ERROR;
-	int index;
-
-	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
-	{
-		printf("\nInformacion del cliente: \n");
-		printf("\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
-		for(int i=0;i<lenClient;i++)
-		{
-			index = publi_findById(listPublication,lenPubli,id);
-			if(listPublication[index].idClient == listClient[i].idClient)
-			{
-				cli_printOne(listClient[i]);
-			}
-		}
-		result = SUCCESS;
 	}
 	return result;
 }

@@ -9,6 +9,8 @@
 #define PUBLICATION_H_
 #define ADV_LEN 64
 #include "Client.h"
+#define ACTIVE 1
+#define PAUSED 0
 
 typedef struct {
 	int idClient;
@@ -32,7 +34,8 @@ int publi_isAnyData(Publication *list, int len);
 int publi_hardCodeData(Publication* list);
 int publi_isActive(Publication *list, int len, int id);
 int publi_pauseOrActivatePublication(Publication *list, int len, int idPubli, int choice);
-int publi_qtyPausedPublications(Publication *list, int len);
+int publi_qtyPublications(Publication *list, int len, int* qtyAds,int choice);
+int publi_printPublicationsByState(Publication *list, int len,int choice);
 int publi_modify(Publication* list, int len,Client* listClient, int lenClient);
 
 #endif /* PUBLICATION_H_ */
