@@ -399,28 +399,19 @@ int publi_qtyPublications(Publication *list, int len, int* qtyAds,int choice)
 {
 	int result = ERROR;
 	int i;
-	int counterPaused = 0;
-	int counterActive = 0;
+	int counter = 0;
 
 	if (list != NULL && len > 0 && qtyAds != NULL && (choice == PAUSED || choice == ACTIVE))
 	{
 		for (i = 0; i < len; i++)
 		{
-			if(list[i].isEmpty == FALSE && list[i].state == PAUSED)
+			if(list[i].isEmpty == FALSE && list[i].state == choice)
 			{
-				counterPaused++;
-			}
-			if(list[i].isEmpty == FALSE && list[i].state == ACTIVE)
-			{
-				counterActive++;
+				counter++;
 			}
 		}
-		if (choice == PAUSED)
-		{
-			*qtyAds = counterPaused;
-		} else {
-			*qtyAds = counterActive;
-		}
+		*qtyAds = counter;
+
 		result = SUCCESS;
 	}
 	return result;
@@ -443,11 +434,7 @@ int publi_printPublicationsByState(Publication *list, int len,int choice)
 		printf("\n\n%10s %15s %15s %35s %20s\n", "ID PUBLI", "RUBRO", "ID CLIENTE", "TEXTO AVISO", "ESTADO");
 		for (i = 0; i < len; i++)
 		{
-			if(choice == PAUSED && list[i].isEmpty == FALSE && list[i].state == PAUSED)
-			{
-				publi_printOne(list[i]);
-			}
-			if(choice == ACTIVE && list[i].isEmpty == FALSE && list[i].state == ACTIVE)
+			if(list[i].isEmpty == FALSE && list[i].state == choice)
 			{
 				publi_printOne(list[i]);
 			}

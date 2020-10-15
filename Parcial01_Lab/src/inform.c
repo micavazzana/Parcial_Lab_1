@@ -92,7 +92,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 						printf("\nEl cliente con mas avisos activos es: \n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
 						cli_printOne(listClient[index]);
 						printf("\nTiene %d avisos",qtyAds);
-					} else if (index == -2) {
+					} else if (index == -2) { //imprimir aunque sea 1
 						printf("Hay mas de un cliente con la misma cantidad de avisos activos");
 					} else {
 						printf("Error");
@@ -380,7 +380,7 @@ int rubro_printList(Rubro *list, int len)
 
 
 
-//////DESARROLLADAS EN PARCIAL
+////////////DESARROLLADAS EN PARCIAL//////////////////////
 
 
 /**
@@ -401,18 +401,13 @@ int info_findIndexClientWithMorePublicationsActivesorPaused(Publication *listPub
 	int i;
 	int max;
 
-	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && qtyAds != NULL)
+	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && qtyAds != NULL && (choice == PAUSED || choice == ACTIVE))
 	{
 		for (i = 0; i < lenClient; i++)
 		{
 			if(listClient[i].isEmpty == FALSE)
 			{
-				if(choice == ACTIVE)
-				{
-					publi_qtyPublicationsById(listPublication, lenPubli,&qty,ACTIVE, listClient[i].idClient);
-				} else {
-					publi_qtyPublicationsById(listPublication, lenPubli,&qty,PAUSED, listClient[i].idClient);
-				}
+				publi_qtyPublicationsById(listPublication, lenPubli, &qty, choice, listClient[i].idClient);
 				if (qty > max || i == 0)
 				{
 					max = qty;
@@ -431,28 +426,19 @@ int publi_qtyPublicationsById(Publication *list, int len, int* qtyAds,int choice
 {
 	int result = ERROR;
 	int i;
-	int counterPaused = 0;
-	int counterActive = 0;
+	int counter = 0;
 
 	if (list != NULL && len > 0 && qtyAds != NULL && (choice == PAUSED || choice == ACTIVE))
 	{
 		for (i = 0; i < len; i++)
 		{
-			if(list[i].isEmpty == FALSE && list[i].state == PAUSED && list[i].idClient == id)
+			if(list[i].isEmpty == FALSE && list[i].state == choice && list[i].idClient == id)
 			{
-				counterPaused++;
-			}
-			if(list[i].isEmpty == FALSE && list[i].state == ACTIVE && list[i].idClient == id)
-			{
-				counterActive++;
+				counter++;
 			}
 		}
-		if (choice == PAUSED)
-		{
-			*qtyAds = counterPaused;
-		} else {
-			*qtyAds = counterActive;
-		}
+		*qtyAds = counter;
+
 		result = SUCCESS;
 	}
 	return result;
