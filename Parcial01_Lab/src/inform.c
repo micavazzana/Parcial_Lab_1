@@ -283,16 +283,16 @@ static int rubroIsInList(Rubro *listRubro, int lenRubro, int rubro)
 int rubro_generateList(Publication *listPublication, int lenPublication,Rubro *listRubro, int lenRubro)
 {
 	int result = ERROR;
-	int indexPubli;
+	int i;
 	int indexRubro = 0;
 
 	if (listRubro != NULL && lenRubro > 0 && listPublication != NULL && lenPublication > 0 && rubro_init(listRubro, lenRubro) == SUCCESS)
 	{
-		for (indexPubli = 0; indexPubli < lenRubro; indexPubli++)
+		for (i = 0; i < lenPublication; i++)
 		{
-			if (listPublication[indexPubli].isEmpty == FALSE && rubroIsInList(listRubro, lenRubro, listPublication[indexPubli].rubro) == FALSE)
+			if (listPublication[i].isEmpty == FALSE && rubroIsInList(listRubro, lenRubro, listPublication[i].rubro) == FALSE)
 			{
-				listRubro[indexRubro].rubro = listPublication[indexPubli].rubro;
+				listRubro[indexRubro].rubro = listPublication[i].rubro;
 				listRubro[indexRubro].isEmpty = FALSE;
 				indexRubro++;
 			}
