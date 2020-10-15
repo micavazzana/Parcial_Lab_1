@@ -61,7 +61,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 					}
 				}
 				break;
-			case 2://podria imprimir ademas cuales son las publicaciones que estan pausadas
+			case 2://podria imprimir ademas cuales son las publicaciones que estan pausadas // lala
 				pausedPublication = publi_qtyPausedPublications(listPublication, lenPubli);
 				if(pausedPublication != ERROR)
 				{
@@ -72,7 +72,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 			case 3:
 				if(isListRubroCreated != ERROR)
 				{
-					bufferRubro = info_RubroWithMorePublications(listPublication, lenPubli, listRubro, LEN_RUBRO);
+					bufferRubro = info_rubroWithMorePublications(listPublication, lenPubli, listRubro, LEN_RUBRO);
 					if(bufferRubro >=0)
 					{
 						printf("\nEl numero de rubro con mas publicaciones es: %d",bufferRubro);
@@ -97,6 +97,7 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
  * \param lenPublication int Array publications length
  * \param listClient Client* Pointer to array of clients
  * \param lenClient Array client length
+ * \param qtyAds int* Pointer where to leave the maximum number of publications found
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
  * 				  or number of index in which the client with more publications is
  * 				  (-2) if it can't find a client with more publications than other
@@ -104,32 +105,24 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 int info_findIndexClientWithMorePublications(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int* qtyAds)
 {
 	int result = ERROR;
-	int counter = 0;
+	int qty;
 	int i;
-	int j;
 	int max;
 
-	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
+	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && qtyAds != NULL)
 	{
 		for (i = 0; i < lenClient; i++)
 		{
 			if(listClient[i].isEmpty == FALSE)
 			{
-				for (j = 0; j < lenPubli; j++)
+				qty = qtyPublicationsByClient(listPublication, lenPubli, listClient, lenClient,i);
+				if (qty > max || i == 0)
 				{
-					if(listClient[i].idClient == listPublication[j].idClient)
-					{
-						counter++;
-					}
-				}
-				if (counter > max || i == 0)
-				{
-					max = counter;
+					max = qty;
 					result = i;
-				} else if (counter == max) {
+				} else if (qty == max) {
 					result = -2;
 				}
-				counter = 0;
 			}
 		}
 		*qtyAds = max;
@@ -138,40 +131,31 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
 }
 
 /**
- * \brief Prints the list of clients whit its quantity of actives publications
+ * \brief Counts the quantity of publications of one client (it controls it by the index received)
  * \param listPublication Publication* Pointer to array of publications
  * \param lenPublication int Array publications length
  * \param listClient Client* Pointer to array of clients
  * \param lenClient Array client length
+ * \param indexClient int index of the client (that will allow to know his number of publications)
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
- * 				  or number of index in which the client with more publications is
+ * 				  or number of publications counted
  */
-int info_printClientWithQtyPublicationsActives(Publication *listPublication, int lenPubli, Client* listClient, int lenClient)
+int qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* listClient, int lenClient,int indexClient)
 {
 	int result = ERROR;
 	int counter = 0;
 	int i;
-	int j;
 
-	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
+	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && indexClient >=0)
 	{
-		for (i = 0; i < lenClient; i++)
+		for (i = 0; i < lenPubli; i++)
 		{
-			if(listClient[i].isEmpty == FALSE)
+			if(listClient[indexClient].idClient == listPublication[i].idClient)
 			{
-				for (j = 0; j < lenPubli; j++)
-				{
-					if(listClient[i].idClient == listPublication[j].idClient && listPublication[j].state == ACTIVE)
-					{
-						counter++;
-					}
-				}
-				printf("\n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
-				cli_printOne(listClient[i]);
-				printf("\nCantidad de avisos activos: %d\n",counter);
-				counter = 0;
+				counter++;
 			}
 		}
+		result = counter;
 	}
 	return result;
 }
@@ -186,12 +170,11 @@ int info_printClientWithQtyPublicationsActives(Publication *listPublication, int
  * 				  or number of rubro with more publications
  * 				  (-2) if it can't find a rubro with more publications than other
  */
-int info_RubroWithMorePublications(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro)
+int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro)
 {
 	int result = ERROR;
-	int counter = 0;
+	int qty;
 	int i;
-	int j;
 	int max;
 
 	if (listRubro != NULL && lenRubro > 0 && listPublication != NULL && lenPubli > 0)
@@ -200,26 +183,42 @@ int info_RubroWithMorePublications(Publication *listPublication, int lenPubli, R
 		{
 			if(listRubro[i].isEmpty == FALSE)
 			{
-				for (j = 0; j < lenPubli; j++)//atomizar los doble for en una func
+				qty = qtyPublicationsSameNumberRubro(listPublication, lenPubli, listRubro, lenRubro,i);
+				if (qty > max || i == 0)
 				{
-					if(listPublication[j].rubro == listRubro[i].rubro)
-					{
-						counter++;
-					}
-				}
-				if (counter > max || i == 0)
-				{
-					max = counter;
+					max = qty;
 					result = listRubro[i].rubro;
-				} else if (counter == max) {
+				} else if (qty == max) {
 					result = -2;
 				}
-				counter = 0;
 			}
 		}
 	}
 	return result;
 }
+
+int qtyPublicationsSameNumberRubro(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro,int indexRubro)
+{
+	int result = ERROR;
+	int counter = 0;
+	int i;
+
+	if (listRubro != NULL && lenRubro > 0 && listPublication != NULL && lenPubli > 0 && indexRubro >=0)
+	{
+		for (i = 0; i < lenPubli; i++)
+		{
+			if(listRubro[indexRubro].rubro == listPublication[i].rubro)
+			{
+				counter++;
+			}
+		}
+		result = counter;
+	}
+	return result;
+}
+
+
+
 
 /////////////////Rubros functions////////////////////////
 

@@ -309,7 +309,7 @@ int publi_isAnyData(Publication *list, int len)
 int publi_hardCodeData(Publication* list)
 {
 	int result = ERROR;
-	int idClient[] = {1,2,3,4,8,2,7,2,5,10,9,6,11};
+	int idClient[] = {1,2,3,4,8,2,7,5,2,10,9,6,6};
 	int rubro[] = {11,11,22,11,22,33,55,33,44,44,55,66,77};
 	char advertisementText[][ADV_LEN] = {"Telefonos baratos","Eliminacion de monstruos","Se busca radio con antena",
 			"Carpas de Will, la mejor proteccion","Buenas vibras spa","La buena rula","Comida casera","Jardineria, corto su pasto",
@@ -348,7 +348,7 @@ int publi_isActive(Publication *list, int len, int id)
 	{
 		for (i = 0; i < len; i++)
 		{
-			if(list[i].state == ACTIVE && id == list[i].idPublication) //if it's active
+			if(list[i].state == ACTIVE && id == list[i].idPublication) //if that publication it's active
 			{
 				result = TRUE;
 				break;
@@ -359,37 +359,14 @@ int publi_isActive(Publication *list, int len, int id)
 }
 
 /**
- * \brief Pause a publication searched by Id (put state Flag in 0)
+ * \brief Pause or Activates a publication searched by Id (put state Flag in 0 or 1)
  * \param list Publication* Pointer to array of publications
  * \param len int Array length
  * \param id int, id searched
+ * \param choice int,
  * \return int Return (-1) if Error [Invalid length or NULL pointer or if can't find a publication] - (0) if Ok
  */
-int publi_pausePublication(Publication *list, int len, int idPubli)
-{
-	int result = ERROR;
-	int index;
-
-	if (list != NULL && len > 0 && idPubli > 0 && publi_findById(list,len,idPubli) != ERROR)
-	{
-		index = publi_findById(list,len,idPubli);
-		if(list[index].isEmpty == FALSE && list[index].state == ACTIVE)
-		{
-			list[index].state = PAUSED;
-			result = SUCCESS;
-		}
-	}
-	return result;
-}
-
-/**
- * \brief Restart a publication searched by Id (put state Flag in 1)
- * \param list Publication* Pointer to array of publications
- * \param len int Array length
- * \param id int, id searched
- * \return int Return (-1) if Error [Invalid length or NULL pointer or if can't find a publication] - (0) if Ok
- */
-int publi_restartPublication(Publication *list, int len, int idPubli)
+int publi_pauseOrActivatePublication(Publication *list, int len, int idPubli, int choice)
 {
 	int result = ERROR;
 	int index;
@@ -399,8 +376,14 @@ int publi_restartPublication(Publication *list, int len, int idPubli)
 		index = publi_findById(list,len,idPubli);
 		if(list[index].isEmpty == FALSE)
 		{
-			list[index].state = ACTIVE;
-			result = SUCCESS;
+			if(choice == ACTIVE)
+			{
+				list[index].state = ACTIVE;
+				result = SUCCESS;
+			} else {
+				list[index].state = PAUSED;
+				result = SUCCESS;
+			}
 		}
 	}
 	return result;

@@ -31,8 +31,7 @@ int publi_printListById(Publication *list, int len,int id);
 int publi_isAnyData(Publication *list, int len);
 int publi_hardCodeData(Publication* list);
 int publi_isActive(Publication *list, int len, int id);
-int publi_pausePublication(Publication *list, int len, int idPubli);
-int publi_restartPublication(Publication *list, int len, int idPubli);
+int publi_pauseOrActivatePublication(Publication *list, int len, int idPubli, int choice);
 int publi_qtyPausedPublications(Publication *list, int len);
 int publi_modify(Publication* list, int len,Client* listClient, int lenClient);
 

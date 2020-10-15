@@ -116,8 +116,7 @@ int main(void) {
 					break;
 				case 7:
 					if(publi_isAnyData(listPublication, QTY_PUBLICATION) && cli_isAnyData(listClient, QTY_CLIENT)) {
-					info_printClientWithQtyPublicationsActives(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
-					//clientPublication_printClientAndPublications(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
+						clientPublication_printClientAndPublications(listPublication, QTY_PUBLICATION,listClient, QTY_CLIENT);
 					}  else {
 					printf("\nDebe cargar datos primero");
 					}

@@ -73,7 +73,7 @@ int publication_pause(Client* listClient,int lenClient, Publication* listPublica
 				&& client_printClientInformation(listPublication,lenPubli,listClient,lenClient,bufferId) == SUCCESS
 				&& utn_getName(bufferAnswer,10,"\n\nEsta seguro de que quiere pausar esta publicacion? Debe ingresar 'Si' para proceder: ", "\nError,ingrese una respuesta valida.",3) == SUCCESS
 				&& strncasecmp(bufferAnswer,"si",10)==0
-				&& publi_pausePublication(listPublication, lenPubli,bufferId) == SUCCESS)
+				&& publi_pauseOrActivatePublication(listPublication, lenPubli,bufferId,PAUSED) == SUCCESS)
 		{
 			result = SUCCESS;
 		}
@@ -104,7 +104,7 @@ int publication_reactivate(Client* listClient,int lenClient, Publication* listPu
 				&& client_printClientInformation(listPublication,lenPubli,listClient,lenClient,bufferId) == SUCCESS
 				&& utn_getName(bufferAnswer,10,"\n\nEsta seguro de que quiere activar esta publicacion? Debe ingresar 'Si' para proceder: ", "\nError,ingrese una respuesta valida.",3) == SUCCESS
 				&& strncasecmp(bufferAnswer,"si",10)==0
-				&& publi_restartPublication(listPublication, lenPubli,bufferId) == SUCCESS)
+				&& publi_pauseOrActivatePublication(listPublication, lenPubli,bufferId,ACTIVE) == SUCCESS)
 		{
 			result = SUCCESS;
 		}
@@ -145,7 +145,7 @@ int client_printClientInformation(Publication *listPublication, int lenPubli, Cl
 }
 
 /**
- * \brief Prints the information of all the clients and its publications
+ * \brief Prints the information of all the clients and its publications and the quantity of active publications
  * \param list Client* Pointer to array of clients
  * \param lenClient int Array clients length
  * \param list Publication* Pointer to array of publications
@@ -159,33 +159,37 @@ int clientPublication_printClientAndPublications(Publication *listPublication, i
 	int result = ERROR;
 	int i;
 	int j;
-	int flagIsPublication;
+	int hasPublications;
+	int counter = 0;
 
 	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0)
 	{
-		for(i=0;i<lenClient;i++)
+		for (i = 0; i < lenClient; i++)
 		{
-			if(listClient[i].isEmpty == FALSE)
+			if (listClient[i].isEmpty == FALSE)
 			{
-				printf("\n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
+				hasPublications = FALSE;
+				printf("\n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE",	"APELLIDO", "CUIT");
 				cli_printOne(listClient[i]);
 				printf("\n\n%10s %15s %15s %35s %20s\n", "ID PUBLI", "RUBRO", "ID CLIENTE", "TEXTO AVISO", "ESTADO");
-				flagIsPublication = FALSE;
-				for(j=0;j<lenPubli;j++)
+				for (j = 0; j < lenPubli; j++)
 				{
-					if(listPublication[j].isEmpty == FALSE && listPublication[j].state == ACTIVE && listPublication[j].idClient == listClient[i].idClient)
+					if (listPublication[j].isEmpty == FALSE	&& listPublication[j].state == ACTIVE && listPublication[j].idClient == listClient[i].idClient)
 					{
-						flagIsPublication = TRUE;
 						publi_printOne(listPublication[j]);
+						hasPublications = TRUE;
+						counter++;
 					}
 				}
-				if(flagIsPublication==FALSE)
-				{
-					printf("No tiene publicaciones");
+				if (hasPublications) {
+					printf("\nCantidad de avisos activos: %d\n", counter);
+				} else {
+					printf("\nNo tiene avisos");
 				}
+				counter = 0;
 			}
 		}
-		result=SUCCESS;
+		result = SUCCESS;
 	}
 	return result;
 }

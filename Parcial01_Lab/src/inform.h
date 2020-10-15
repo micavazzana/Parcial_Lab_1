@@ -16,11 +16,14 @@ typedef struct {
 
 int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient, int lenClient);
 int info_findIndexClientWithMorePublications(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int* qtyAds);
-int info_RubroWithMorePublications(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro);
+int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro);
 int info_printClientWithQtyPublicationsActives(Publication *listPublication, int lenPubli, Client* listClient, int lenClient);
 int rubro_init(Rubro *listRubro, int lenRubro);
 int rubro_generateList(Publication *listPublication, int lenPublication,Rubro *listRubro, int lenRubro);
 int rubro_printOne(Rubro list);
 int rubro_printList(Rubro *list, int len);
 
+
+int qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* listClient, int lenClient,int indexClient);
+int qtyPublicationsSameNumberRubro(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro,int indexRubro);
 #endif /* INFORM_H_ */
