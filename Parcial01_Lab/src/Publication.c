@@ -535,4 +535,3 @@ int publi_modify(Publication* list, int len,Client* listClient, int lenClient)
 	}
 	return result;
 }
-

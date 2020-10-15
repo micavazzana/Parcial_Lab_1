@@ -38,7 +38,9 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 				"\n1. Cliente con más avisos"
 				"\n2. Cantidad de avisos pausados"
 				"\n3. Rubro con mas avisos"
-				"\n4. Volver al menu principal\n\n","\nError! elija una opcion valida",1,4,3)==SUCCESS)
+				"\n4. Cliente con más avisos activos"
+				"\n5. Cliente con más avisos pausados"
+				"\n6. Volver al menu principal\n\n","\nError! elija una opcion valida",1,6,3)==SUCCESS)
 		{
 			switch(option)
 			{
@@ -81,9 +83,41 @@ int info_subMenu(Publication *listPublication, int lenPubli, Client* listClient,
 					}
 				}
 				break;
+			case 4:
+				if(info_findIndexClientWithMorePublicationsActivesorPaused(listPublication,lenPubli,listClient,lenClient,&qtyAds,ACTIVE)!=ERROR)
+				{
+					index = info_findIndexClientWithMorePublicationsActivesorPaused(listPublication,lenPubli,listClient,lenClient,&qtyAds,ACTIVE);
+					if(index>=0)
+					{
+						printf("\nEl cliente con mas avisos activos es: \n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
+						cli_printOne(listClient[index]);
+						printf("\nTiene %d avisos",qtyAds);
+					} else if (index == -2) {
+						printf("Hay mas de un cliente con la misma cantidad de avisos activos");
+					} else {
+						printf("Error");
+					}
+				}
+				break;
+			case 5:
+				if(info_findIndexClientWithMorePublicationsActivesorPaused(listPublication,lenPubli,listClient,lenClient,&qtyAds,PAUSED)!=ERROR)
+				{
+					index = info_findIndexClientWithMorePublicationsActivesorPaused(listPublication,lenPubli,listClient,lenClient,&qtyAds,PAUSED);
+					if(index>=0)
+					{
+						printf("\nEl cliente con mas avisos pausados es: \n\n%10s %15s %15s %35s\n", "ID CLIENTE", "NOMBRE", "APELLIDO","CUIT");
+						cli_printOne(listClient[index]);
+						printf("\nTiene %d avisos",qtyAds);
+					} else if (index == -2) {
+						printf("Hay mas de un cliente con la misma cantidad de avisos pausados");
+					} else {
+						printf("Error");
+					}
+				}
+				break;
 			}
 		}
-		}while(option!=4);
+		}while(option!=6);
 		result=SUCCESS;
 	}
 	return result;
@@ -336,6 +370,88 @@ int rubro_printList(Rubro *list, int len)
 		for (i = 0; i < len; i++)
 		{
 			rubro_printOne(list[i]);
+		}
+		result = SUCCESS;
+	}
+	return result;
+}
+
+
+
+
+
+//////DESARROLLADAS EN PARCIAL
+
+
+/**
+ * \brief Finds the index from client that has more publications
+ * \param listPublication Publication* Pointer to array of publications
+ * \param lenPublication int Array publications length
+ * \param listClient Client* Pointer to array of clients
+ * \param lenClient Array client length
+ * \param qtyAds int* Pointer to where it will leave the maximum number of publications found
+ * \return Return (-1) if Error [Invalid length or NULL pointer] -
+ * 				  or number of index in which the client with more publications is
+ * 				  (-2) if it can't find a client with more publications than other
+ */
+int info_findIndexClientWithMorePublicationsActivesorPaused(Publication *listPublication, int lenPubli, Client* listClient, int lenClient, int* qtyAds, int choice)
+{
+	int result = ERROR;
+	int qty;
+	int i;
+	int max;
+
+	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && qtyAds != NULL)
+	{
+		for (i = 0; i < lenClient; i++)
+		{
+			if(listClient[i].isEmpty == FALSE)
+			{
+				if(choice == ACTIVE)
+				{
+					publi_qtyPublicationsById(listPublication, lenPubli,&qty,ACTIVE, listClient[i].idClient);
+				} else {
+					publi_qtyPublicationsById(listPublication, lenPubli,&qty,PAUSED, listClient[i].idClient);
+				}
+				if (qty > max || i == 0)
+				{
+					max = qty;
+					result = i;
+				} else if (qty == max) {
+					result = -2;
+				}
+			}
+		}
+		*qtyAds = max;
+	}
+	return result;
+}
+
+int publi_qtyPublicationsById(Publication *list, int len, int* qtyAds,int choice,int id)
+{
+	int result = ERROR;
+	int i;
+	int counterPaused = 0;
+	int counterActive = 0;
+
+	if (list != NULL && len > 0 && qtyAds != NULL && (choice == PAUSED || choice == ACTIVE))
+	{
+		for (i = 0; i < len; i++)
+		{
+			if(list[i].isEmpty == FALSE && list[i].state == PAUSED && list[i].idClient == id)
+			{
+				counterPaused++;
+			}
+			if(list[i].isEmpty == FALSE && list[i].state == ACTIVE && list[i].idClient == id)
+			{
+				counterActive++;
+			}
+		}
+		if (choice == PAUSED)
+		{
+			*qtyAds = counterPaused;
+		} else {
+			*qtyAds = counterActive;
 		}
 		result = SUCCESS;
 	}
