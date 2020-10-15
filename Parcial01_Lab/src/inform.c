@@ -113,7 +113,7 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
 		{
 			if(listClient[i].isEmpty == FALSE)
 			{
-				qty = info_qtyPublicationsByClient(listPublication, lenPubli, listClient, lenClient,i);
+				qty = info_countPublicationsByClient(listPublication, lenPubli, listClient[i].idClient);
 				if (qty > max || i == 0)
 				{
 					max = qty;
@@ -129,26 +129,24 @@ int info_findIndexClientWithMorePublications(Publication *listPublication, int l
 }
 
 /**
- * \brief Counts the quantity of publications of one client (it controls it by the index received)
+ * \brief Counts the quantity of publications of one client (it controls it by the id received)
  * \param listPublication Publication* Pointer to array of publications
  * \param lenPublication int Array publications length
- * \param listClient Client* Pointer to array of clients
- * \param lenClient Array client length
- * \param indexClient int index of the client
+ * \param id int id of the client searched
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
  * 				  or number of publications counted
  */
-int info_qtyPublicationsByClient(Publication *listPublication, int lenPubli, Client* listClient, int lenClient,int indexClient)
+int info_countPublicationsByClient(Publication *listPublication, int lenPubli, int id)
 {
 	int result = ERROR;
 	int counter = 0;
 	int i;
 
-	if (listClient != NULL && lenClient > 0 && listPublication != NULL && lenPubli > 0 && indexClient >=0)
+	if (listPublication != NULL && lenPubli > 0 && id >=0)
 	{
 		for (i = 0; i < lenPubli; i++)
 		{
-			if(listClient[indexClient].idClient == listPublication[i].idClient)
+			if(listPublication[i].isEmpty == FALSE && listPublication[i].idClient == id)
 			{
 				counter++;
 			}
@@ -181,7 +179,7 @@ int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, R
 		{
 			if(listRubro[i].isEmpty == FALSE)
 			{
-				qty = info_qtyPublicationsSameNumberRubro(listPublication, lenPubli, listRubro, lenRubro,i);
+				qty = info_countPublicationsWithSameRubroNumber(listPublication, lenPubli,listRubro[i].rubro);
 				if (qty > max || i == 0)
 				{
 					max = qty;
@@ -196,26 +194,24 @@ int info_rubroWithMorePublications(Publication *listPublication, int lenPubli, R
 }
 
 /**
- * \brief Counts the quantity of publications with the same rubro number (it controls it by the index received)
+ * \brief Counts the quantity of publications with the same rubro number (it controls it by the id received)
  * \param listPublication Publication* Pointer to array of publications
  * \param lenPublication int Array publications length
- * \param listRubro Rubro* Pointer to array of rubros
- * \param lenRubro int Array rubros length
- * \param indexRubro int index of the rubro
+ * \param idRubro int id of the rubro searched
  * \return Return (-1) if Error [Invalid length or NULL pointer] -
  * 				  or number of publications with same rubro number counted
  */
-int info_qtyPublicationsSameNumberRubro(Publication *listPublication, int lenPubli, Rubro* listRubro, int lenRubro,int indexRubro)
+int info_countPublicationsWithSameRubroNumber(Publication *listPublication, int lenPubli,int idRubro)
 {
 	int result = ERROR;
 	int counter = 0;
 	int i;
 
-	if (listRubro != NULL && lenRubro > 0 && listPublication != NULL && lenPubli > 0 && indexRubro >=0)
+	if (listPublication != NULL && lenPubli > 0 && idRubro >=0)
 	{
 		for (i = 0; i < lenPubli; i++)
 		{
-			if(listRubro[indexRubro].rubro == listPublication[i].rubro)
+			if(listPublication[i].isEmpty == FALSE && listPublication[i].rubro == idRubro)
 			{
 				counter++;
 			}

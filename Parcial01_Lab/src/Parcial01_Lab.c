@@ -99,28 +99,36 @@ int main(void) {
 						printf("\nDebe cargar clientes primero.\n");
 					}
 					break;
-				case 5: //esto de pausar puede ser como el sort, pasar por parametro un valor para el cambio de estado
-					if(publi_isAnyData(listPublication, QTY_PUBLICATION)
-							&& publi_qtyPublications(listPublication,QTY_PUBLICATION, &qtyAds,ACTIVE)==SUCCESS && qtyAds > 0
-							&& publication_pause(listClient, QTY_CLIENT,listPublication, QTY_PUBLICATION) == SUCCESS)
+				case 5:
+					if(publi_isAnyData(listPublication, QTY_PUBLICATION))
 					{
-						printf("Publicacion pausada con exito");
-					} else if (qtyAds == 0) {
-						printf("No hay publicaciones activas");
+						if(publi_qtyPublications(listPublication,QTY_PUBLICATION, &qtyAds,ACTIVE)==SUCCESS && qtyAds > 0
+								&& publication_pause(listClient, QTY_CLIENT,listPublication, QTY_PUBLICATION) == SUCCESS)
+						{
+							printf("Publicacion pausada con exito");
+						} else if (qtyAds == 0) {
+							printf("No hay publicaciones activas para pausar");
+						} else {
+							printf("\nHa decidido no pausar la publicacion, o ha ingresado erroneamente el id, o la publicacion ya se encuentra pausada.\n");
+						}
 					} else {
-						printf("\nDebe cargar publicaciones primero, o ha decidido no pausar la publicacion, o ha ingresado erroneamente el id, o la publicacion ya se encuentra pausada.\n");
+						printf("\nDebe cargar publicaciones primero");
 					}
 					break;
 				case 6:
-					if(publi_isAnyData(listPublication, QTY_PUBLICATION)
-							&& publi_qtyPublications(listPublication,QTY_PUBLICATION, &qtyAds,PAUSED)==SUCCESS && qtyAds > 0
-							&& publication_reactivate(listClient, QTY_CLIENT,listPublication, QTY_PUBLICATION) == SUCCESS)
+					if(publi_isAnyData(listPublication, QTY_PUBLICATION))
 					{
-						printf("Publicacion activada con exito");
-					} else if (qtyAds == 0) {
-						printf("No hay publicaciones pausadas");
+						if(publi_qtyPublications(listPublication,QTY_PUBLICATION, &qtyAds,PAUSED)==SUCCESS && qtyAds > 0
+								&& publication_reactivate(listClient, QTY_CLIENT,listPublication, QTY_PUBLICATION) == SUCCESS)
+						{
+							printf("Publicacion activada con exito");
+						} else if (qtyAds == 0) {
+							printf("No hay publicaciones pausadas para reactivar");
+						} else {
+							printf("\nHa decidido no activar la publicacion, o ha ingresado erroneamente el id, o la publicacion ya se encuentra activa.\n");
+						}
 					} else {
-						printf("\nDebe cargar publicaciones primero, o ha decidido no activar la publicacion, o ha ingresado erroneamente el id, o la publicacion ya se encuentra activa.\n");
+						printf("\nDebe cargar publicaciones primero");
 					}
 					break;
 				case 7:
