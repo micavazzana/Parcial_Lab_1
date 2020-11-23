@@ -13,6 +13,7 @@
 #define CABA 1
 #define ZONA_SUR 2
 #define ZONA_OESTE 3
+#include "Client.h"
 
 typedef struct {
 	int id;
@@ -57,6 +58,12 @@ int sale_getStatusTxt(Sale* this, char* status);
 
 int sale_printOne(void* this);
 void headerSale(void);
-int sale_compareByStatus(void* this);
+void* findById(LinkedList* list, int id,int choiceList);
+int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient,int* asignedId);
+int sale_Edit(LinkedList* listSale, LinkedList* listClient, int (*pFunc)(Sale*,LinkedList*),char* msj, int status);
+int sale_EditFields(Sale* pSale, LinkedList* listClient);
+int sale_EditStatus(Sale* pSale, LinkedList* listClient);
+
+int sale_compareByStatus(void* this, void* arg);
 
 #endif /* SALE_H_ */

@@ -9,13 +9,21 @@
 #define CLIENT_H_
 #define NAME_LEN 51
 #define CUIT_LEN 20
+#define ERROR -1
+#define SUCCESS 0
+#define TRUE 1
+#define FALSE 0
+#define CLIENT 1
+#define SALE 2
+#include "LinkedList.h"
+#include "inputs.h"
 
 typedef struct {
 	int idClient;
 	char name[NAME_LEN];
 	char lastName[NAME_LEN];
 	char cuit[CUIT_LEN];
-	int qtySalesByClient;
+	int qtySalesByStatus;
 }Client;
 
 Client* cli_new(void);
@@ -36,10 +44,13 @@ int cli_getLastName(Client* this, char* lastName);
 int cli_setCuit(Client* this, char* cuit);
 int cli_getCuit(Client* this, char* cuit);
 
-int cli_setSalesByClient(Client* this,int qty);
-int cli_getSalesByClient(Client* this,int* qty);
+int cli_setQtySalesByStatus(Client* this,int qty);
+int cli_getQtySalesByStatus(Client* this,int* qty);
+
 
 int cli_printOne(void* this);
 void headerClient(void);
+int cli_loadAndAddData(LinkedList* listClient);
+int cli_cuitIsInList(LinkedList* listClient, char* cuit);
 
 #endif /* CLIENT_H_ */

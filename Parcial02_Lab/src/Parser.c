@@ -6,9 +6,6 @@
  */
 #include "Parser.h"
 
-#define ERROR -1
-#define SUCCESS 0
-
 /** \brief Parsea los datos desde el archivo que recibe por parametro (modo texto).
  * \param pFile FILE* puntero al archivo a cargar
  * \param listClient LinkedList* puntero a la lista de clientes
@@ -158,32 +155,32 @@ int parser_SaleToText(FILE* pFile, LinkedList* listSale)
 }
 
 /**
- * \brief Escribe los datos de los clientes en el archivo que recibe por parametro(modo texto).
+ * \brief Escribe los datos de los clientes en el archivo que recibe por parametro(modo texto). Agrega campo cantidad de ventas
  * \param pFile FILE* puntero al archivo a cargar
  * \param listClient LinkedList* puntero a la lista de clientes
  * \return int Return (-1) ERROR - Si el puntero a LikedList es NULL o si el puntero al archivo es NULL o si no pudo escribir el cliente al archivo
  * 					  (0) EXITO
  */
-int parser_qtySalesCharged(FILE* pFile, LinkedList* newList)
+int parser_ClientQtySalesCharged(FILE* pFile, LinkedList* list)
 {
 	int result = ERROR;
 	Client* pClient;
 	Client buffer;
 
-	if(pFile != NULL && newList != NULL)
+	if(pFile != NULL && list != NULL)
 	{
-		fprintf(pFile,"ID,NOMBRE,APELLIDO,CUIT,CANTIDAD VENTAS\n");
-		for(int i = 0; i< ll_len(newList);i++)
+		fprintf(pFile,"ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS\n");
+		for(int i = 0; i< ll_len(list);i++)
 		{
-			pClient = (Client*)ll_get(newList,i);
+			pClient = (Client*)ll_get(list,i);
 			if(pClient != NULL
 					&& cli_getId(pClient,&buffer.idClient) == SUCCESS
 					&& cli_getName(pClient,buffer.name) == SUCCESS
 					&& cli_getLastName(pClient,buffer.lastName) == SUCCESS
 					&& cli_getCuit(pClient,buffer.cuit) == SUCCESS
-					&& cli_getSalesByClient(pClient,&buffer.qtySalesByClient)==SUCCESS)
+					&& cli_getQtySalesByStatus(pClient,&buffer.qtySalesByStatus)==SUCCESS)
 			{
-				fprintf(pFile,"%d,%s,%s,%s,%d\n",buffer.idClient,buffer.name,buffer.lastName,buffer.cuit,buffer.qtySalesByClient);
+				fprintf(pFile,"%d,%s,%s,%s,%d\n",buffer.idClient,buffer.name,buffer.lastName,buffer.cuit,buffer.qtySalesByStatus);
 			}
 		}
 		result = SUCCESS;

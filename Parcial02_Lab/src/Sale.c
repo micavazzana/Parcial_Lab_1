@@ -9,11 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Sale.h"
-#include "validations.h"
-#define ERROR -1
-#define SUCCESS 0
-#define TRUE 1
-#define FALSE 0
+
+static int generateNewIdSale(void);
 
 /*
  * \brief Pide memoria para una nueva venta
@@ -461,6 +458,39 @@ int sale_getStatusTxt(Sale* this, char* status)
     return result;
 }
 
+
+/****************** FUNCIONES *****************/
+
+/**
+ * \brief Genera un nuevo id para una nueva venta
+ * \param void
+ * \return int Return value of the new id
+ */
+static int generateNewIdSale(void)
+{
+    int id = ERROR;
+    FILE* pFile;
+    char bufferId[500];
+
+	pFile = fopen("idSale.txt", "r");
+	if(pFile != NULL)
+	{
+		if(fscanf(pFile,"%s",bufferId)==1)
+		{
+			id = atoi(bufferId);
+			id++;
+		}
+		fclose(pFile);
+	}
+	pFile = fopen("idSale.txt", "w");
+	if(pFile != NULL)
+	{
+		fprintf(pFile,"%d",id);
+		fclose(pFile);
+	}
+    return id;
+}
+
 /**
  * \brief Imprime los datos de una venta
  * \param this void* puntero a void
@@ -478,29 +508,31 @@ int sale_printOne(void* this)
 	if(this != NULL)
 	{
 		oneSale = (Sale*)this;
-		sale_getId(oneSale,&buffer.id);
-		sale_getIdClient(oneSale,&buffer.idClient);
-		sale_getPosterQty(oneSale,&buffer.posterQty);
-		sale_getFileName(oneSale,buffer.fileName);
-		sale_getZone(oneSale,&buffer.zone);
-		sale_getStatus(oneSale,&buffer.status);
-		if(buffer.zone == CABA)
+		if(sale_getId(oneSale,&buffer.id) == SUCCESS
+				&& sale_getIdClient(oneSale,&buffer.idClient) == SUCCESS
+				&& sale_getPosterQty(oneSale,&buffer.posterQty) == SUCCESS
+				&& sale_getFileName(oneSale,buffer.fileName) == SUCCESS
+				&& sale_getZone(oneSale,&buffer.zone) == SUCCESS
+				&& sale_getStatus(oneSale,&buffer.status) == SUCCESS)
 		{
-			sprintf(zone,"CABA");
-		} else if (buffer.zone == ZONA_SUR)
-		{
-			sprintf(zone,"ZONA SUR");
-		} else {
-			sprintf(zone,"ZONA OESTE");
+			if(buffer.zone == CABA)
+			{
+				sprintf(zone,"CABA");
+			} else if (buffer.zone == ZONA_SUR)
+			{
+				sprintf(zone,"ZONA SUR");
+			} else {
+				sprintf(zone,"ZONA OESTE");
+			}
+			if(buffer.status == TO_CHARGE)
+			{
+				sprintf(status,"A COBRAR");
+			} else {
+				sprintf(status,"COBRADA");
+			}
+			printf("\n%10d %15d %15d %15s %18s %30s\n",buffer.id,buffer.idClient,buffer.posterQty,zone,status,buffer.fileName);
+			result = SUCCESS;
 		}
-		if(buffer.status == TO_CHARGE)
-		{
-			sprintf(status,"A COBRAR");
-		} else {
-			sprintf(status,"COBRADA");
-		}
-		printf("\n%10d %15d %15d %15s %18s %30s\n",buffer.id,buffer.idClient,buffer.posterQty,zone,status,buffer.fileName);
-		result = SUCCESS;
 	}
 	return result;
 }
@@ -515,16 +547,261 @@ void headerSale(void)
 	printf("\n%10s %15s %15s %15s %18s %30s\n","ID","ID CLIENTE","CANT AFICHES","ZONA","ESTADO","NOMBRE ARCHIVO");
 }
 
-int sale_compareByStatus(void* this)
+/**
+ * \brief Busca un id del listado que se elija por parametro
+ * \param list LinkedList* puntero al listado
+ * \param id int id buscado
+ * \param choiceList int eleccion del listado
+ * \return void* Return puntero al elemento buscado
+ * 					   NULL - Si el puntero a LikedList es NULL,o id invalido o id no encontrado
+ */
+void* findById(LinkedList* list, int id,int choiceList)
+{
+	void* result = NULL;
+	void* pElement;
+	int i;
+	int bufferId;
+	int resultAux;
+
+	if(list != NULL && id > 0 && (choiceList == 1 || choiceList == 2))
+	{
+		for (i = 0; i < ll_len(list); i++)
+		{
+			if(choiceList == CLIENT)
+			{
+				pElement = (Client*)ll_get(list,i);
+				resultAux = cli_getId(pElement,&bufferId);
+			} else {
+				pElement = (Sale*)ll_get(list,i);
+				resultAux = sale_getId(pElement,&bufferId);
+			}
+			if(resultAux != ERROR && bufferId == id)
+			{
+				result = pElement;
+				break;
+			}
+		}
+	}
+	return result;
+}
+
+/**
+ * \brief Alta de ventas - Solicita los datos de los campos al usuario y lo añade a la lista
+ * \param listSale LinkedList* puntero a lista ventas
+ * \param listClient LinkedList* puntero a lista clientes
+ * \return int Return (-1) ERROR - Si el puntero a LikedList es NULL, si no hay espacio en memoria para una venta o no puede agregar la carga
+ * 					  (-2) ERROR - Si el id ingresado no existe o el usuario completa incorrectamente los campos
+ * 					  (0) EXITO
+ */
+int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient, int* asignedId)
+{
+	int result = ERROR;
+	Sale* pSale;
+	Sale buffer;
+
+	if (listSale != NULL)
+	{
+		pSale = sale_new();
+		if (pSale != NULL)
+		{
+			headerClient();
+			ll_map(listClient,cli_printOne);
+			if(utn_getNumber(&buffer.idClient, "\nIngrese el id del cliente: ", "\nError", 0, 999999, 3) == SUCCESS
+					&& findById(listClient,buffer.idClient,CLIENT)!= NULL
+					&& utn_getNumber(&buffer.posterQty, "\nIngrese la cantidad de afiches: ", "\nError", 0, 999999, 3) == SUCCESS
+					&& utn_getIdentityDocument(buffer.fileName, FILENAME_LEN, "\nIngrese nombre de archivo: ", "\nError!", 3) == SUCCESS
+					&& utn_getNumber(&buffer.zone, "\nIngrese la zona [1-CABA / 2-ZONA SUR / 3-ZONA OESTE]: ", "\nError", 1, 3, 3) == SUCCESS)
+			{
+				buffer.id = generateNewIdSale();
+				if(sale_setId(pSale,buffer.id) == SUCCESS
+						&& sale_setIdClient(pSale,buffer.idClient) == SUCCESS
+						&& sale_setPosterQty(pSale,buffer.posterQty) == SUCCESS
+						&& sale_setFileName(pSale,buffer.fileName) == SUCCESS
+						&& sale_setZone(pSale,buffer.zone) == SUCCESS
+						&& sale_setStatus(pSale,TO_CHARGE) == SUCCESS)
+				{
+					result = ll_add(listSale,pSale);
+					*asignedId = buffer.id;
+				} else {
+					sale_delete(pSale);
+				}
+			} else {
+				sale_delete(pSale);
+				result = -2;
+			}
+		}
+	}
+	return result;
+}
+
+/**
+ * \brief Filtra la lista por estado y muestra las ventas. Pide al usuario un id de venta y muestra el cliente a quien le pertenece
+ * \param listSale LinkedList* puntero a la lista de ventas
+ * \param listClient LinkedList* puntero a la lista de clientes
+ * \param pFunc (*pFunc) puntero a funcion que permite elegir que modificar
+ * \param msj char* mensaje a mostrar para pedirle al usuario que es lo que debe ingresar
+ * \param status int estado para filtrar la lista: a_cobrar o cobrada
+ * \return Return (-1) Error - Si el puntero a LikedList es NULL o venta no encontrada
+ * 				  (0) EXITO
+ */
+int sale_Edit(LinkedList* listSale, LinkedList* listClient, int (*pFunc)(Sale*,LinkedList*),char* msj,int status)
+{
+	int result = ERROR;
+	LinkedList* newList = NULL;
+	Sale buffer;
+	Client* pClient;
+	Sale* pSale;
+
+	if(listSale != NULL && listClient != NULL)
+	{
+		newList = ll_clone(listSale);
+		if(newList != NULL)
+		{
+			if(ll_filter2(newList,sale_compareByStatus,&status) == SUCCESS
+					&& ll_map(newList,sale_printOne) == SUCCESS
+					&& utn_getNumber(&buffer.id, msj, "\nError", 0, 999999, 3) == SUCCESS)
+			{
+				pSale = findById(newList,buffer.id,SALE);
+				if(pSale != NULL)
+				{
+					sale_getIdClient(pSale,&buffer.idClient);
+					pClient = findById(listClient,buffer.idClient,CLIENT);
+					printf("\nLa venta le pertenece al cliente: \n");
+					headerClient();
+					cli_printOne(pClient);
+					if(pFunc(pSale,listClient)==SUCCESS)
+					{
+						result = SUCCESS;
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
+
+/**
+ * \brief Modificar datos de la venta - Permite al usuario elegir que campo cambiar
+ * \param listClient LinkedList* puntero a la lista de cliente
+ * \param pSale Sale* puntero al elemento (venta a modificar)
+ * \return Return (-1) Error - Si el puntero a LikedList es NULL o puntero a la venta es NULL
+ * 				  (-2) Error - Si no pudo cambiar el id del cliente
+ * 				  (-3) Error - Si no pudo cambiar la cantidad de afiches
+ * 				  (-4) Error - Si no pudo cambiar el nombre de archivo
+ * 				  (-5) Error - Si no pudo cambiar la zona
+ * 				  (0) EXITO
+ */
+int sale_EditFields(Sale* pSale, LinkedList* listClient)
+{
+	int result = ERROR;
+	int option;
+	Sale buffer;
+
+	if(pSale != NULL && listClient != NULL)
+	{
+		do
+		{
+			if (utn_getNumber(&option, "\n\nIngrese una opcion: "
+					"\n1.Modificar cliente al que le pertenece la venta (idCliente)"
+					"\n2.Modificar cantidad de afiches "
+					"\n3.Modificar nombre de archivo"
+					"\n4.Modificar zona"
+					"\n5.Volver al menu principal\n",
+					"Error, elija una opcion valida\n", 1, 5, 3) == SUCCESS)
+			{
+				switch (option)
+				{
+				case 1:
+					if (utn_getNumber(&buffer.idClient, "\nIngrese el nuevo id del cliente: ", "\nError", 0, 999999, 3) == SUCCESS
+							&& findById(listClient,buffer.idClient,CLIENT)!= NULL)
+					{
+						sale_setIdClient(pSale,buffer.idClient);
+						result = SUCCESS;
+					} else {
+						result = -2;
+					}
+					break;
+				case 2:
+					if (utn_getNumber(&buffer.posterQty, "\nIngrese la nueva cantidad de afiches: ", "\nError", 0, 999999, 3) == SUCCESS)
+					{
+						sale_setPosterQty(pSale,buffer.posterQty);
+						result = SUCCESS;
+					} else {
+						result = -3;
+					}
+					break;
+				case 3:
+					if (utn_getIdentityDocument(buffer.fileName, FILENAME_LEN, "\nIngrese el nuevo nombre de archivo: ", "\nError!", 3) == SUCCESS)
+					{
+						sale_setFileName(pSale,buffer.fileName);
+						result = SUCCESS;
+					} else {
+						result = -4;
+					}
+					break;
+				case 4:
+					if (utn_getNumber(&buffer.zone, "\nIngrese la nueva zona [1-CABA / 2-ZONA SUR / 3-ZONA OESTE]: ", "\nError", 1, 3, 3) == SUCCESS)
+					{
+						sale_setZone(pSale,buffer.zone);
+						result = SUCCESS;
+					} else {
+						result = -5;
+					}
+					break;
+				}
+			} else {
+				printf("Se acabaron sus reintentos, vuelva a ingresar");
+			}
+			if (result < 0) {
+				break;
+			}
+		} while(option != 5);
+	}
+	return result;
+}
+
+/**
+ * \brief Modificar el estado de la venta - Cambia el estado "COBRADA"
+ * \param listClient LinkedList* puntero a la lista de cliente
+ * \param pSale Sale* puntero al elemento (venta a modificar)
+ * \return Return (-1) Error - Si el puntero a LikedList es NULL o puntero a la venta es NULL o si decidio no cobrar la venta
+ * 				  (0) EXITO
+ */
+int sale_EditStatus(Sale* pSale, LinkedList* listClient)
+{
+	int result = ERROR;
+	char bufferAnswer[10];
+
+	if(pSale != NULL && listClient != NULL)
+	{
+		if (utn_getName(bufferAnswer, 10, "\n\nSeguro que quiere cobrarla? Debe ingresar 'Si' para proceder: ", "\nError,ingrese una respuesta valida.", 3) == SUCCESS
+							&& strncasecmp(bufferAnswer, "si", 10) == 0)
+		{
+			sale_setStatus(pSale,CHARGED);
+			result = SUCCESS;
+		}
+	}
+	return result;
+}
+
+/*
+ * \brief Compara un estado
+ * \param this void* puntero a elemento
+ * \return int Return (-1) ERROR - Si el puntero a void* es NULL
+ * 					  (1) TRUE - si el estado es igual a "a cobrar"
+ * 					  (0) FALSE - si el estado es igual a "cobrada"
+ */
+int sale_compareByStatus(void* this, void* arg)
 {
 	int returnAux = ERROR;
 	Sale* status = (Sale*)this;
 	int buffer;
+	int* statusToCompare = (int*)arg;
 
 	if(this != NULL)
 	{
 		sale_getStatus(status,&buffer);
-		if(buffer == TO_CHARGE)//a cobrar
+		if(buffer == (*statusToCompare))
 		{
 			returnAux = TRUE;
 		} else {

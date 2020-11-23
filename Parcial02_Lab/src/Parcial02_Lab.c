@@ -10,8 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "inputs.h"
-#include "LinkedList.h"
 #include "Controller.h"
 #define ERROR -1
 #define SUCCESS 0
@@ -87,7 +85,7 @@ int main(void) {
 					}
 					break;
 				case 3:
-					if(sale_edit(listSale, listClient,sale_EditFields,"\nIngrese el id de la venta a modificar: ") == SUCCESS
+					if(sale_Edit(listSale, listClient,sale_EditFields,"\nIngrese el id de la venta a modificar: ",TO_CHARGE) == SUCCESS
 							&& controller_loadOrSaveFromTxt(listSale,"sales.txt","w",parser_SaleToText) == SUCCESS)
 					{
 						printf("\nCambios realizados con exito\n");
@@ -96,7 +94,7 @@ int main(void) {
 					}
 					break;
 				case 4:
-					if(sale_edit(listSale, listClient,sale_EditStatus,"\nIngrese el id de la venta que quiere cobrar: ") == SUCCESS
+					if(sale_Edit(listSale, listClient,sale_EditStatus,"\nIngrese el id de la venta que quiere cobrar: ",TO_CHARGE) == SUCCESS
 							&& controller_loadOrSaveFromTxt(listSale,"sales.txt","w",parser_SaleToText) == SUCCESS)
 					{
 						printf("\nCobrada con exito\n");
@@ -105,20 +103,13 @@ int main(void) {
 					}
 					break;
 				case 5:
-					cli_qtySalesByClient(listSale, listClient,CHARGED);
+					info_qtySalesByClient(listSale, listClient,CHARGED);
 					break;
 				case 6:
-					cli_qtySalesByClient(listSale, listClient,TO_CHARGE);
+					info_qtySalesByClient(listSale, listClient,TO_CHARGE);
 					break;
 				case 7:
-					/*
-					1 - si estado es cobrada - cuento cantidad de afiches por cada idCliente / listadoVentas / maximo //MOSTRAR CLIENTE
-					2 - si estado es cobrada - cuento cantidad de afiches por cada idCliente / listadoVentas / minimo // MOSTRAR CLIENTE
-					3 - MOSTRAR VENTA (maxima cantidad de adiches)*/
-					//headerClient();
-					//ll_map(listClient,cli_printOne);
-					headerSale();
-					ll_map(listSale,sale_printOne);
+					info_generateEstadistics(listSale, listClient);
 					break;
 				case 8:
 					printf("Hasta luego!");

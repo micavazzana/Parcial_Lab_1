@@ -38,7 +38,7 @@ ID,ID CLIENTE,CANT AFICHES,NOMBRE ARCHIVO,ZONA,ESTADO
 37,64,15,dis.tiff,2,1
 38,45,14,erat.tiff,3,2
 39,63,5,turpis.tiff,3,1
-40,68,20,inPurusEu.gif,3,1
+40,68,1,inPurusEu.gif,3,1
 41,43,13,ligula.png,3,2
 42,27,15,ipsum.gif,1,1
 43,22,10,cras.jpeg,1,1
@@ -172,7 +172,7 @@ ID,ID CLIENTE,CANT AFICHES,NOMBRE ARCHIVO,ZONA,ESTADO
 171,72,14,iaculisDiamErat.tiff,3,1
 172,65,11,orci.tiff,1,2
 173,72,2,posuere.png,2,1
-174,68,20,quamPedeLobortis.jpeg,3,1
+174,68,1,quamPedeLobortis.jpeg,3,1
 175,81,7,nislAeneanLectus.tiff,3,1
 176,67,2,non.tiff,2,1
 177,63,15,nasceturRidiculusMus.jpeg,2,1
@@ -302,6 +302,6 @@ ID,ID CLIENTE,CANT AFICHES,NOMBRE ARCHIVO,ZONA,ESTADO
 301,46,5,prueba.jpg,2,1
 302,23,7,probando.png,3,2
 303,9,1,lalala.arw,1,1
-304,1,2,lala,1,1
+304,2,2,pruebaFinalFinal.jpg,1,1
 305,102,3,pruebita.jpg,2,1
 306,102,3,lalala.tiff,1,1
