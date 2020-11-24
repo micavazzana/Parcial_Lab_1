@@ -674,3 +674,29 @@ int ll_filter2(LinkedList * this, FunctionFilter pFunc, void* arg)
 	}
 	return returnAux;
 }
+
+/** \brief Reduce la lista a un numero (tipo Int), usando a la funcion criterio recibida como parametro y el argumento
+ * \param this LinkedList* Puntero a la lista
+ * \param pFunc (*pFunc) Puntero a la funcion criterio
+ * \param arg void* Puntero a argumento de tipo void*
+ * \return int Retorna acum - Valor acumulado o (0) Error: si el puntero a la listas es NULL
+ */
+int ll_reduceInt2(LinkedList* this,int (*pFunc)(void*,void*),void* arg)
+{
+	void *pAux;
+	int i;
+	int acum = 0;
+
+	if (this != NULL && pFunc != NULL)
+	{
+		for (i = 0; i < ll_len(this); i++)
+		{
+			pAux = ll_get(this, i);
+			if (pAux != NULL)
+			{
+				acum = acum + pFunc(pAux,arg);
+			}
+		}
+	}
+	return acum;
+}

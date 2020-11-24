@@ -810,3 +810,23 @@ int sale_compareByStatus(void* this, void* arg)
 	}
 	return returnAux;
 }
+
+/*
+ * \brief Compara el id de un cliente con el id que recibe por argumento
+ * \param this void* puntero a elemento
+ * \return int Return La cantidad de afiches que tiene ese cliente
+ */
+int sale_compareQtyPoster(void* pElement, void* arg)
+{
+	Sale* pSale = (Sale*)pElement;
+	int* idClient = (int*)arg;
+	int bufferId;
+	int qty = 0;
+
+	sale_getIdClient(pSale, &bufferId);
+	if((*idClient) == bufferId)
+	{
+		sale_getPosterQty(pSale, &qty);
+	}
+	return qty;
+}

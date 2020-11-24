@@ -371,7 +371,7 @@ int cli_loadAndAddData(LinkedList* listClient)
 						&& cli_setCuit(pClient, buffer.cuit) == SUCCESS
 						&& cli_setId(pClient, buffer.idClient) == SUCCESS)
 				{
-					result = ll_add(listClient, pClient);
+					result = ll_add(listClient, pClient);//pClient
 				}
 			} else {
 				result = -2;

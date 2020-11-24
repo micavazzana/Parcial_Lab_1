@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "Controller.h"
+#include "inform.h"
 #define ERROR -1
 #define SUCCESS 0
 #define TRUE 1
@@ -24,7 +24,8 @@ int main(void) {
 	void* pElement;
 	int bufferId;
 
-	if(controller_loadOrSaveFromTxt(listClient,"client.txt","r",parser_ClientFromText)==SUCCESS && controller_loadOrSaveFromTxt(listSale,"sales.txt","r",parser_SaleFromText) == SUCCESS)
+	if(controller_loadOrSaveFromTxt(listClient,"client.txt","r",parser_ClientFromText)==SUCCESS
+			&& controller_loadOrSaveFromTxt(listSale,"sales.txt","r",parser_SaleFromText) == SUCCESS)
 	{
 		do
 		{
@@ -103,10 +104,20 @@ int main(void) {
 					}
 					break;
 				case 5:
-					info_qtySalesByClient(listSale, listClient,CHARGED);
+					if(info_qtySalesByClient(listSale, listClient,CHARGED) == SUCCESS)
+					{
+						printf("\nArchivo guardado con exito\n");
+					} else {
+						printf("\nNo se pudo guardar el archivo\n");
+					}
 					break;
 				case 6:
-					info_qtySalesByClient(listSale, listClient,TO_CHARGE);
+					if(info_qtySalesByClient(listSale, listClient,TO_CHARGE) == SUCCESS)
+					{
+						printf("\nArchivo guardado con exito\n");
+					} else {
+						printf("\nNo se pudo guardar el archivo\n");
+					}
 					break;
 				case 7:
 					info_generateEstadistics(listSale, listClient);

@@ -63,7 +63,7 @@ int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient,int* asigne
 int sale_Edit(LinkedList* listSale, LinkedList* listClient, int (*pFunc)(Sale*,LinkedList*),char* msj, int status);
 int sale_EditFields(Sale* pSale, LinkedList* listClient);
 int sale_EditStatus(Sale* pSale, LinkedList* listClient);
-
 int sale_compareByStatus(void* this, void* arg);
+int sale_compareQtyPoster(void* pElement, void* arg);
 
 #endif /* SALE_H_ */

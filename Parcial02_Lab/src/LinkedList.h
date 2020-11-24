@@ -40,6 +40,7 @@ int ll_filter(LinkedList * this, Function pFunc);
 int ll_reduceInt(LinkedList* this, Function pFunc);
 float ll_reduceFloat(LinkedList* this, FunctionReduceFloat pFunc);
 int ll_filter2(LinkedList * this, FunctionFilter pFunc, void* arg);
+int ll_reduceInt2(LinkedList* this,int (*pFunc)(void*,void*),void* arg);
 
 //Publicas
 LinkedList* ll_newLinkedList(void);

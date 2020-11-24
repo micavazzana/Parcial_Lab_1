@@ -286,7 +286,7 @@ ID,ID CLIENTE,CANT AFICHES,NOMBRE ARCHIVO,ZONA,ESTADO
 285,13,12,ac.jpeg,3,2
 286,94,6,quamTurpisAdipiscing.png,1,2
 287,11,13,luctusTinciduntNulla.tiff,2,2
-288,70,12,quis.jpeg,3,1
+288,70,12,quis.jpeg,3,2
 289,14,4,egestas.tiff,3,2
 290,89,5,semperInterdumMauris.tiff,3,1
 291,93,17,quamPede.png,3,1
@@ -305,3 +305,8 @@ ID,ID CLIENTE,CANT AFICHES,NOMBRE ARCHIVO,ZONA,ESTADO
 304,2,2,pruebaFinalFinal.jpg,1,1
 305,102,3,pruebita.jpg,2,1
 306,102,3,lalala.tiff,1,1
+307,32,120,muchosAfiches.png,1,2
+308,103,250,lalala.jpg,2,2
+309,1,500,323,1,2
+310,1,1,lala,1,2
+311,103,600,lala,2,2
