@@ -18,8 +18,11 @@ int main(void) {
 	LinkedList* listSale = ll_newLinkedList();
 	void* pElement;
 	int bufferId;
+	//LinkedList* filteredList  = ll_newLinkedList();
+	//LinkedList* filteredList2  = ll_newLinkedList();
 
-	if(controller_loadOrSaveFromTxt(listClient,"client.txt","r",parser_ClientFromText)==SUCCESS
+	if(listClient != NULL && listSale != NULL
+			&& controller_loadOrSaveFromTxt(listClient,"client.txt","r",parser_ClientFromText)==SUCCESS
 			&& controller_loadOrSaveFromTxt(listSale,"sales.txt","r",parser_SaleFromText) == SUCCESS)
 	{
 		do
@@ -91,6 +94,10 @@ int main(void) {
 					if(info_qtySalesByClient(listSale, listClient,CHARGED,cli_setQtySalesCharged) == SUCCESS
 							&& controller_loadOrSaveFromTxt(listClient,"cobradas.txt","w",parser_ClientQtySalesCharged) == SUCCESS)
 					{
+						//filteredList = ll_clone(listClient);
+						//ll_filter(filteredList,cli_compareCharged);
+						//controller_loadOrSaveFromTxt(filteredList,"cobradas prueba.txt","w",parser_ClientQtySalesCharged);
+						//ll_deleteLinkedList(filteredList);
 						printf("\nArchivo guardado con exito\n");
 					} else {
 						printf("\nNo se pudo guardar el archivo\n");
@@ -100,6 +107,10 @@ int main(void) {
 					if(info_qtySalesByClient(listSale, listClient,TO_CHARGE,cli_setQtySalesToCharge) == SUCCESS
 							&& controller_loadOrSaveFromTxt(listClient,"a cobrar.txt","w",parser_ClientQtySalesToCharge) == SUCCESS)
 					{
+						//filteredList2 = ll_clone(listClient);
+						//ll_filter(filteredList2,cli_compareToCharge);
+						//controller_loadOrSaveFromTxt(filteredList2,"a cobrar prueba.txt","w",parser_ClientQtySalesToCharge);
+						//ll_deleteLinkedList(filteredList2);
 						printf("\nArchivo guardado con exito\n");
 					} else {
 						printf("\nNo se pudo guardar el archivo\n");

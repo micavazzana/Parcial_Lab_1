@@ -677,6 +677,7 @@ int sale_Edit(LinkedList* listSale, LinkedList* listClient, int (*pFunc)(Sale*,L
 					}
 				}
 			}
+			ll_deleteLinkedList(newList);
 		}
 	}
 	return result;

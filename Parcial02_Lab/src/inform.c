@@ -26,20 +26,24 @@ int info_qtySalesByClient(LinkedList* listSale, LinkedList* listClient, int choi
 	if(listSale != NULL && listClient != NULL)
 	{
 		filteredList = ll_newLinkedList();
-		filteredList = ll_clone(listSale);
-		ll_filter2(filteredList,sale_compareByStatus,&choice);
-		for (i = 0; i < ll_len(listClient); i++)
+		if(filteredList != NULL)
 		{
-			pClient = (Client*) ll_get(listClient,i);
-			if(pClient != NULL)
+			filteredList = ll_clone(listSale);
+			ll_filter2(filteredList,sale_compareByStatus,&choice);
+			for (i = 0; i < ll_len(listClient); i++)
 			{
-				cli_getId(pClient,&bufferIdClient);
-				if (info_qtySalesById(filteredList,&qty,choice,bufferIdClient) == SUCCESS && qty >= 0)
+				pClient = (Client*) ll_get(listClient,i);
+				if(pClient != NULL)
 				{
-					pFuncSet(pClient,qty);
-					result = SUCCESS;
+					cli_getId(pClient,&bufferIdClient);
+					if (info_qtySalesById(filteredList,&qty,choice,bufferIdClient) == SUCCESS && qty >= 0)
+					{
+						pFuncSet(pClient,qty);
+						result = SUCCESS;
+					}
 				}
 			}
+			ll_deleteLinkedList(filteredList);
 		}
 	}
 	return result;
@@ -212,7 +216,7 @@ Sale* info_qtyPostersBySale(LinkedList* listSale, int choice, int* qtyPoster, in
 Client* info_qtyPostersByClient(LinkedList* listSale,LinkedList* listClient, int choice, int* qtyPoster,int status)
 {
 	void* returnAux = NULL;
-	LinkedList* clonedList = ll_newLinkedList();
+	LinkedList* clonedListSale = ll_newLinkedList();
 	int max;
 	int min;
 	int i;
@@ -220,32 +224,32 @@ Client* info_qtyPostersByClient(LinkedList* listSale,LinkedList* listClient, int
 	int bufferId;
 	int acum;
 
-	if(listSale != NULL && listClient != NULL && clonedList != NULL &&
+	if(listSale != NULL && listClient != NULL && clonedListSale != NULL &&
 				(choice == MAX || choice == MIN) && qtyPoster != NULL && (status == TO_CHARGE || status == CHARGED))
 	{
-		clonedList = ll_clone(listSale);
-		if (clonedList != NULL)
+		clonedListSale = ll_clone(listSale);
+		if (clonedListSale != NULL)
 		{
-			if(ll_filter2(clonedList,sale_compareByStatus,&status) == SUCCESS)
+			if(ll_filter2(clonedListSale,sale_compareByStatus,&status) == SUCCESS)
 			{
 				for(i = 0; i < ll_len(listClient);i++)
 				{
-					acum = 0;
 					pClient = ll_get(listClient,i);
 					cli_getId(pClient,&bufferId);
-					acum = ll_reduceInt2(clonedList,sale_compareQtyPoster,&bufferId);
-					if((i == 0 || acum > max) && choice == MAX)
+					acum = ll_reduceInt2(clonedListSale,sale_compareQtyPoster,&bufferId);
+					if((i == 0 || acum > max) && choice == MAX && acum > 0)
 					{
 						max = acum;
 						returnAux = pClient;
 						*qtyPoster = max;
-					} else if ((i == 0 || acum < min) && choice == MIN)	{
+					} else if ((i == 0 || acum < min) && choice == MIN && acum > 0)	{
 						min = acum;
 						returnAux = pClient;
 						*qtyPoster = min;
 					}
 				}
 			}
+			ll_deleteLinkedList(clonedListSale);
 		}
 	}
 	return returnAux;

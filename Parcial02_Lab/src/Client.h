@@ -63,5 +63,7 @@ int cli_compareByName(void* first, void* second);
 int cli_compareByLastName(void* first, void* second);
 int cli_compareByCuit(void* first, void* second);
 int menuSortClient(void);
+int cli_compareCharged(void* this);
+int cli_compareToCharge(void* this);
 
 #endif /* CLIENT_H_ */

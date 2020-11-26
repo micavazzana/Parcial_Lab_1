@@ -563,3 +563,41 @@ int menuSortClient(void)
 	}
 	return result;
 }
+
+int cli_compareCharged(void* this)
+{
+	int returnAux = ERROR;
+	Client* pClient = (Client*)this;
+	int bufferQty;
+
+	if(this != NULL)
+	{
+		cli_getQtySalesCharged(pClient,&bufferQty);
+		if(bufferQty > 0)
+		{
+			returnAux = TRUE;
+		} else {
+			returnAux = FALSE;
+		}
+	}
+	return returnAux;
+}
+
+int cli_compareToCharge(void* this)
+{
+	int returnAux = ERROR;
+	Client* pClient = (Client*)this;
+	int bufferQty;
+
+	if(this != NULL)
+	{
+		cli_getQtySalesToCharge(pClient,&bufferQty);
+		if(bufferQty > 0)
+		{
+			returnAux = TRUE;
+		} else {
+			returnAux = FALSE;
+		}
+	}
+	return returnAux;
+}
