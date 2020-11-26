@@ -245,12 +245,12 @@ int cli_getCuit(Client* this, char* cuit)
  * \return int Return (-1) ERROR - Si el puntero a Client* es NULL o si la cantidad no es valida
  * 					  (0) EXITO
  */
-int cli_setQtySalesByStatus(Client* this,int qty)
+int cli_setQtySalesCharged(Client* this,int qty)
 {
 	int result = ERROR;
 	if (this != NULL && qty >= 0)
 	{
-		this->qtySalesByStatus = qty;
+		this->qtySalesCharged = qty;
 		result = SUCCESS;
 	}
 	return result;
@@ -263,16 +263,54 @@ int cli_setQtySalesByStatus(Client* this,int qty)
  * \return int Return (-1) ERROR - Si el puntero a Client* es NULL o si e puntero a qty es NULL
  * 					  (0) EXITO
  */
-int cli_getQtySalesByStatus(Client* this,int* qty)
+int cli_getQtySalesCharged(Client* this,int* qty)
 {
 	int result = ERROR;
 	if (this != NULL && qty != NULL)
 	{
-		*qty = this->qtySalesByStatus;
+		*qty = this->qtySalesCharged;
 		result = SUCCESS;
 	}
 	return result;
 }
+
+/*
+ * \brief Carga la cantidad de ventas por estado en el campo del cliente
+ * \param this Client* puntero a cliente
+ * \param qty int cantidad a cargar
+ * \return int Return (-1) ERROR - Si el puntero a Client* es NULL o si la cantidad no es valida
+ * 					  (0) EXITO
+ */
+int cli_setQtySalesToCharge(Client* this,int qty)
+{
+	int result = ERROR;
+	if (this != NULL && qty >= 0)
+	{
+		this->qtySalesToCharge = qty;
+		result = SUCCESS;
+	}
+	return result;
+}
+
+/*
+ * \brief Obtiene la cantidad de ventas por estado del cliente
+ * \param this Client* puntero a cliente
+ * \param qty int* puntero al espacio donde va a guardar la cantidad obtenida
+ * \return int Return (-1) ERROR - Si el puntero a Client* es NULL o si e puntero a qty es NULL
+ * 					  (0) EXITO
+ */
+int cli_getQtySalesToCharge(Client* this,int* qty)
+{
+	int result = ERROR;
+	if (this != NULL && qty != NULL)
+	{
+		*qty = this->qtySalesToCharge;
+		result = SUCCESS;
+	}
+	return result;
+}
+
+/********** FUNCIONES  ***************/
 
 /**
  * \brief Genera un nuevo id para un nuevo cliente
@@ -344,14 +382,14 @@ void headerClient(void)
 /**
  * \brief Alta de clientes - Solicita los datos de los campos al usuario y lo añade al listado
  * \param listClient LinkedList* puntero a lista clientes
- * \return int Return (-1) ERROR - Si el puntero a LikedList es NULL, si no hay espacio en memoria para un cliente
+ * \return int Return   Client* pClient - Puntero al elemento donde almaceno ese cliente
+ * 						NULL - ERROR - Si el puntero a LikedList es NULL, si no hay espacio en memoria para un cliente
  * 								   o si el usuario completa erroneamente lo requerido o no lo puede agregar a la lista
- * 					  (-2) ERROR - Si el cuit ingresado ya existe
- * 					  (0) EXITO
+ * 					               o si el cuit ingresado ya existe
  */
-int cli_loadAndAddData(LinkedList* listClient)
+Client* cli_loadAndAddData(LinkedList* listClient)
 {
-	int result = ERROR;
+	Client* result = NULL;
 	Client* pClient;
 	Client buffer;
 
@@ -371,10 +409,10 @@ int cli_loadAndAddData(LinkedList* listClient)
 						&& cli_setCuit(pClient, buffer.cuit) == SUCCESS
 						&& cli_setId(pClient, buffer.idClient) == SUCCESS)
 				{
-					result = ll_add(listClient, pClient);//pClient
+					result = pClient;
 				}
 			} else {
-				result = -2;
+				printf("\nHa agotado sus intentos, o el cuit ingresado ya existe, vuelva a intentarlo\n");
 				cli_delete(pClient);
 			}
 		}
@@ -410,6 +448,118 @@ int cli_cuitIsInList(LinkedList* listClient, char* cuit)
 				}
 			}
 		}
+	}
+	return result;
+}
+
+/************************** AGREGADAS *****************************/
+
+int cli_sort(LinkedList* list,int option, int order)
+{
+	int result = ERROR;
+
+	if((option == 1 || option == 2 || option == 3) && (order == 1 || order == 0))
+	{
+		switch (option)
+		{
+		case 1:
+			result = ll_sort(list, cli_compareByName,order);
+			break;
+		case 2:
+			result = ll_sort(list, cli_compareByLastName,order);
+			break;
+		case 3:
+			result = ll_sort(list, cli_compareByCuit,order);
+			break;
+		}
+	}
+	return result;
+}
+
+int cli_compareByName(void* first, void* second)
+{
+	int result = -2;
+	char bufferFirstClient[NAME_LEN];
+	char bufferSecondClient[NAME_LEN];
+	int strCompare;
+
+	if(first != NULL && second != NULL)
+	{
+		cli_getName((Client*)first,bufferFirstClient);
+		cli_getName((Client*)second,bufferSecondClient);
+		strCompare = strncasecmp(bufferFirstClient, bufferSecondClient, NAME_LEN);
+		if(strCompare > 0)
+		{
+			result = 1;
+		} else if (strCompare < 0) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int cli_compareByLastName(void* first, void* second)
+{
+	int result = -2;
+	char bufferFirstClient[NAME_LEN];
+	char bufferSecondClient[NAME_LEN];
+	int strCompare;
+
+	if(first != NULL && second != NULL)
+	{
+		cli_getLastName((Client*)first,bufferFirstClient);
+		cli_getLastName((Client*)second,bufferSecondClient);
+		strCompare = strncasecmp(bufferFirstClient, bufferSecondClient, NAME_LEN);
+		if(strCompare > 0)
+		{
+			result = 1;
+		} else if (strCompare < 0) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int cli_compareByCuit(void* first, void* second)
+{
+	int result = -2;
+	char bufferFirstClient[NAME_LEN];
+	char bufferSecondClient[NAME_LEN];
+	int strCompare;
+
+	if(first != NULL && second != NULL)
+	{
+		cli_getCuit((Client*)first,bufferFirstClient);
+		cli_getCuit((Client*)second,bufferSecondClient);
+		strCompare = strncasecmp(bufferFirstClient, bufferSecondClient, NAME_LEN);
+		if(strCompare > 0)
+		{
+			result = 1;
+		} else if (strCompare < 0) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int menuSortClient(void)
+{
+	int result = ERROR;
+	int option;
+	if (utn_getNumber(&option, "\n\nIngrese una opcion: "
+						"\n1.Ordenar por Nombre "
+						"\n2.Ordenar por Apellido "
+						"\n3.Ordenar por Cuit "
+						"\n4.Volver al menu principal\n",
+						"Error, elija una opcion valida\n", 1, 4, 3) == SUCCESS)
+	{
+		result = option;
 	}
 	return result;
 }

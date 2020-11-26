@@ -7,14 +7,9 @@
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "inform.h"
-#define ERROR -1
-#define SUCCESS 0
-#define TRUE 1
-#define FALSE 0
 
 int main(void) {
 
@@ -43,46 +38,35 @@ int main(void) {
 				switch(option)
 				{
 				case 1:
-					switch(cli_loadAndAddData(listClient))
+					pElement = cli_loadAndAddData(listClient);
+					if(controller_add(listClient, pElement)==SUCCESS)
 					{
-					case SUCCESS:
-						printf("\nAlta realizada con exito!\n\nSu carga:\n");
-						pElement = ll_get(listClient,ll_len(listClient)-1);
+						printf("\nAlta realizada con exito!\nSu carga:\n");
 						headerClient();
 						cli_printOne(pElement);
 						if(controller_loadOrSaveFromTxt(listClient,"client.txt","w",parser_ClientToText) == SUCCESS)
 						{
 							printf("\nGuardado con exito!\n");
 						}
-						break;
-					case ERROR:
+					} else {
 						printf("\nSe ha producido un error, vuelva a intentarlo\n");
-						break;
-					case -2:
-						printf("\nEl cuit ingresado ya existe, vuelva a intentarlo\n");
-						break;
 					}
 					break;
 				case 2:
-					switch(sale_loadAndAddData(listSale,listClient,&bufferId))
+					pElement = sale_loadAndAddData(listSale, listClient);
+					if(controller_add(listSale, pElement)==SUCCESS)
 					{
-					case SUCCESS:
 						printf("\nAlta realizada con exito!\n");
+						sale_getId(pElement,&bufferId);
 						printf("\nID ASIGNADO: %d\nSu carga:\n",bufferId);
-						pElement = ll_get(listSale,ll_len(listSale)-1);
 						headerSale();
 						sale_printOne(pElement);
 						if(controller_loadOrSaveFromTxt(listSale,"sales.txt","w",parser_SaleToText) == SUCCESS)
 						{
 							printf("\nGuardado con exito!\n");
 						}
-						break;
-					case ERROR:
+					} else {
 						printf("\nSe ha producido un error, vuelva a intentarlo\n");
-						break;
-					case -2:
-						printf("\nEl id ingresado no existe o ha ingresado incorrectamente lo requerido, vuelva a intentarlo\n");
-						break;
 					}
 					break;
 				case 3:
@@ -104,7 +88,8 @@ int main(void) {
 					}
 					break;
 				case 5:
-					if(info_qtySalesByClient(listSale, listClient,CHARGED) == SUCCESS)
+					if(info_qtySalesByClient(listSale, listClient,CHARGED,cli_setQtySalesCharged) == SUCCESS
+							&& controller_loadOrSaveFromTxt(listClient,"cobradas.txt","w",parser_ClientQtySalesCharged) == SUCCESS)
 					{
 						printf("\nArchivo guardado con exito\n");
 					} else {
@@ -112,7 +97,8 @@ int main(void) {
 					}
 					break;
 				case 6:
-					if(info_qtySalesByClient(listSale, listClient,TO_CHARGE) == SUCCESS)
+					if(info_qtySalesByClient(listSale, listClient,TO_CHARGE,cli_setQtySalesToCharge) == SUCCESS
+							&& controller_loadOrSaveFromTxt(listClient,"a cobrar.txt","w",parser_ClientQtySalesToCharge) == SUCCESS)
 					{
 						printf("\nArchivo guardado con exito\n");
 					} else {

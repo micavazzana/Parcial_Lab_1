@@ -589,13 +589,14 @@ void* findById(LinkedList* list, int id,int choiceList)
  * \brief Alta de ventas - Solicita los datos de los campos al usuario y lo añade a la lista
  * \param listSale LinkedList* puntero a lista ventas
  * \param listClient LinkedList* puntero a lista clientes
- * \return int Return (-1) ERROR - Si el puntero a LikedList es NULL, si no hay espacio en memoria para una venta o no puede agregar la carga
- * 					  (-2) ERROR - Si el id ingresado no existe o el usuario completa incorrectamente los campos
- * 					  (0) EXITO
+ * \return int Return   Sale* pSale - Puntero al elemento donde almaceno esa venta
+ * 						NULL - ERROR - Si el puntero a LikedList es NULL, si no hay espacio en memoria para una venta
+ * 								   o si el usuario completa erroneamente lo requerido o no lo puede agregar a la lista
+ * 					               Si el id ingresado no existe
  */
-int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient, int* asignedId)
+Sale* sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient)
 {
-	int result = ERROR;
+	Sale* result = NULL;
 	Sale* pSale;
 	Sale buffer;
 
@@ -620,14 +621,13 @@ int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient, int* asign
 						&& sale_setZone(pSale,buffer.zone) == SUCCESS
 						&& sale_setStatus(pSale,TO_CHARGE) == SUCCESS)
 				{
-					result = ll_add(listSale,pSale);
-					*asignedId = buffer.id;
+					result = pSale;
 				} else {
 					sale_delete(pSale);
 				}
 			} else {
 				sale_delete(pSale);
-				result = -2;
+				printf("\nEl id ingresado no existe o ha ingresado incorrectamente lo requerido, vuelva a intentarlo\n");
 			}
 		}
 	}
@@ -635,7 +635,9 @@ int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient, int* asign
 }
 
 /**
- * \brief Filtra la lista por estado y muestra las ventas. Pide al usuario un id de venta y muestra el cliente a quien le pertenece
+ * \brief Filtra la lista por estado y muestra las ventas.
+ *		  Pide al usuario un id de venta y muestra el cliente a quien le pertenece
+ *		  Llama a la funcion que permite elegir que modificar
  * \param listSale LinkedList* puntero a la lista de ventas
  * \param listClient LinkedList* puntero a la lista de clientes
  * \param pFunc (*pFunc) puntero a funcion que permite elegir que modificar
@@ -795,13 +797,13 @@ int sale_compareByStatus(void* this, void* arg)
 {
 	int returnAux = ERROR;
 	Sale* status = (Sale*)this;
-	int buffer;
+	int bufferStatus;
 	int* statusToCompare = (int*)arg;
 
 	if(this != NULL)
 	{
-		sale_getStatus(status,&buffer);
-		if(buffer == (*statusToCompare))
+		sale_getStatus(status,&bufferStatus);
+		if(bufferStatus == (*statusToCompare))
 		{
 			returnAux = TRUE;
 		} else {
@@ -829,4 +831,167 @@ int sale_compareQtyPoster(void* pElement, void* arg)
 		sale_getPosterQty(pSale, &qty);
 	}
 	return qty;
+}
+
+/************************** AGREGADAS *****************************/
+
+int sale_sort(LinkedList* list,int option, int order)
+{
+	int result = ERROR;
+
+	if((option == 1 || option == 2 || option == 3) && (order == 1 || order == 0))
+	{
+		switch (option)
+		{
+		case 1:
+			result = ll_sort(list, sale_compareByPosterQty,order);
+			break;
+		case 2:
+			result = ll_sort(list, sale_compareByFileName,order);
+			break;
+		case 3:
+			result = ll_sort(list, sale_compareByZone,order);
+			break;
+		}
+	}
+	return result;
+}
+
+int sale_compareByPosterQty(void* first, void* second)
+{
+	int result = -2;
+	int bufferFirstSale;
+	int bufferSecondSale;
+
+	if(first != NULL && second != NULL)
+	{
+		sale_getPosterQty((Sale*)first,&bufferFirstSale);
+		sale_getPosterQty((Sale*)second,&bufferSecondSale);
+		if(bufferFirstSale > bufferSecondSale)
+		{
+			result = 1;
+		} else if (bufferFirstSale < bufferSecondSale) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int sale_compareByFileName(void* first, void* second)
+{
+	int result = -2;
+	char bufferFirstSale[NAME_LEN];
+	char bufferSecondSale[NAME_LEN];
+	int strCompare;
+
+	if(first != NULL && second != NULL)
+	{
+		sale_getFileName((Sale*)first,bufferFirstSale);
+		sale_getFileName((Sale*)second,bufferSecondSale);
+		strCompare = strncasecmp(bufferFirstSale, bufferSecondSale, FILENAME_LEN);
+		if(strCompare > 0)
+		{
+			result = 1;
+		} else if (strCompare < 0) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int sale_compareByZone(void* first, void* second)
+{
+	int result = -2;
+	int bufferFirstSale;
+	int bufferSecondSale;
+
+	if(first != NULL && second != NULL)
+	{
+		sale_getZone((Sale*)first,&bufferFirstSale);
+		sale_getZone((Sale*)second,&bufferSecondSale);
+		if(bufferFirstSale > bufferSecondSale)
+		{
+			result = 1;
+		} else if (bufferFirstSale < bufferSecondSale) {
+			result = -1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int menuSortSale(void)
+{
+	int result = ERROR;
+	int option;
+	if (utn_getNumber(&option, "\n\nIngrese una opcion: "
+						"\n1.Ordenar por Cantidad de afiches "
+						"\n2.Ordenar por Nombre de archivo "
+						"\n3.Ordenar por Zona "
+						"\n4.Volver al menu principal\n",
+						"Error, elija una opcion valida\n", 1, 4, 3) == SUCCESS)
+	{
+		result = option;
+	}
+	return result;
+}
+
+int sale_compareZoneAndPosterQty(void* first, void* second)
+{
+	int result = -2;
+	int bufferFirstZone;
+	int bufferSecondZone;
+	int bufferFirstPosterQty;
+	int bufferSecondPosterQty;
+	if(first != NULL && second != NULL)
+	{
+		sale_getZone((Sale*)first,&bufferFirstZone);
+		sale_getZone((Sale*)second,&bufferSecondZone);
+		sale_getPosterQty((Sale*)first,&bufferFirstPosterQty);
+		sale_getPosterQty((Sale*)second,&bufferSecondPosterQty);
+		if(bufferFirstZone > bufferSecondZone
+				|| (bufferFirstZone == bufferSecondZone && bufferFirstPosterQty > bufferSecondPosterQty))
+		{
+			result = -1;
+		} else if (bufferFirstZone < bufferSecondZone
+				|| (bufferFirstZone == bufferSecondZone && bufferFirstPosterQty < bufferSecondPosterQty))
+		{
+			result = 1;
+		} else {
+			result = 0;
+		}
+	}
+	return result;
+}
+
+int sale_remove(LinkedList* listSale)
+{
+	int result = ERROR;
+	int bufferId;
+	Sale* pSale;
+	char bufferAnswer[10];
+	int index;
+
+	if (listSale != NULL)
+	{
+		if (utn_getNumber(&bufferId , "\nIngrese el id de la venta que quiere eliminar: ", "\nError!", 0, 999999, 5) == SUCCESS)
+		{
+			pSale = findById(listSale,bufferId,SALE);
+			if(pSale != NULL
+					&& utn_getName(bufferAnswer, 10, "\n\nDesea borrar? Debe ingresar 'Si' para proceder con la baja: ",
+					"\nError,ingrese una respuesta valida.", 3) == SUCCESS
+					&& strncasecmp(bufferAnswer, "si", 10) == 0)
+			{
+					sale_delete(pSale);
+					index = ll_indexOf(listSale,pSale);
+					result = ll_remove(listSale,index);
+			}
+		}
+	}
+	return result;
 }

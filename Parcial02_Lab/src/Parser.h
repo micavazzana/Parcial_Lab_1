@@ -14,6 +14,7 @@ int parser_ClientFromText(FILE* pFile, LinkedList* listClient);
 int parser_SaleFromText(FILE* pFile, LinkedList* listSale);
 int parser_ClientToText(FILE* pFile, LinkedList* listClient);
 int parser_SaleToText(FILE* pFile, LinkedList* listSale);
-int parser_ClientQtySalesCharged(FILE* pFile, LinkedList* newList);
+int parser_ClientQtySalesCharged(FILE* pFile, LinkedList* list);
+int parser_ClientQtySalesToCharge(FILE* pFile, LinkedList* list);
 
 #endif /* PARSER_H_ */

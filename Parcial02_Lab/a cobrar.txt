@@ -1,13 +1,13 @@
-ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS
+ID,NOMBRE,APELLIDO,CUIT,A COBRAR
 1,Mordy,Morant,27-32345123-4,0
-2,Guido,Filpi,24-34567208-6,2
+2,Guido,Filpi,24-34567208-6,1
 3,Darren,Corthes,23-22122546-5,1
 4,Ernesto,Precious,27-34573250-6,2
 5,Reeva,Tuke,27-32345123-5,1
 6,Derron,Zorzini,24-34567208-7,0
 7,Georgina,Cornforth,23-22122546-6,1
 8,Maurita,Harrell,27-34573250-7,2
-9,Raynell,Danslow,27-32345123-6,4
+9,Raynell,Danslow,27-32345123-6,3
 10,Frieda,Geistbeck,24-34567208-8,2
 11,Arabella,Officer,23-22122546-7,3
 12,Aidan,Wike,27-34573250-8,2
@@ -44,7 +44,7 @@ ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS
 43,Myca,Waddingham,24-34567223-5,0
 44,Hettie,Ferrierio,23-26732541-7,2
 45,Alexine,Rossi,27-66328383-5,2
-46,Malanie,Akett,24-34567223-6,5
+46,Malanie,Akett,24-34567223-6,4
 47,Adelice,Aubert,23-22122541-2,3
 48,Merna,Mewes,27-34275067-6,1
 49,Charlene,Ehlerding,24-34567223-7,1
@@ -68,7 +68,7 @@ ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS
 67,Patrice,McConville,23-22937541-7,4
 68,Joshua,Niemiec,27-34275067-2,4
 69,Tomas,Inott,24-43278462-2,3
-70,Derek,Truitt,23-22104541-8,2
+70,Derek,Truitt,23-22104541-8,1
 71,Jorry,Dyke,27-34534543-2,2
 72,Aldrich,Linebarger,24-34543232-5,2
 73,Katrine,Adlington,27-35434534-1,2
@@ -100,5 +100,6 @@ ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS
 99,Darryl,Obern,27-53455345-6,1
 100,Eyde,Bagg,24-44856932-2,3
 101,prueba,prueba,27-34573250-5,0
-102,otra prueba,otra prueba,27-14264276-5,2
+102,otra prueba,otra prueba,27-14264276-5,0
 103,lala,lala,27-56423-5,0
+104,juan,perez,25-89898989-5,0

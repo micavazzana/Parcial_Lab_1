@@ -169,7 +169,7 @@ int parser_ClientQtySalesCharged(FILE* pFile, LinkedList* list)
 
 	if(pFile != NULL && list != NULL)
 	{
-		fprintf(pFile,"ID,NOMBRE,APELLIDO,CUIT,CANT VENTAS\n");
+		fprintf(pFile,"ID,NOMBRE,APELLIDO,CUIT,COBRADAS\n");
 		for(int i = 0; i< ll_len(list);i++)
 		{
 			pClient = (Client*)ll_get(list,i);
@@ -178,9 +178,44 @@ int parser_ClientQtySalesCharged(FILE* pFile, LinkedList* list)
 					&& cli_getName(pClient,buffer.name) == SUCCESS
 					&& cli_getLastName(pClient,buffer.lastName) == SUCCESS
 					&& cli_getCuit(pClient,buffer.cuit) == SUCCESS
-					&& cli_getQtySalesByStatus(pClient,&buffer.qtySalesByStatus)==SUCCESS)
+					&& cli_getQtySalesCharged(pClient,&buffer.qtySalesCharged)==SUCCESS)
 			{
-				fprintf(pFile,"%d,%s,%s,%s,%d\n",buffer.idClient,buffer.name,buffer.lastName,buffer.cuit,buffer.qtySalesByStatus);
+				fprintf(pFile,"%d,%s,%s,%s,%d\n",buffer.idClient,buffer.name,buffer.lastName,buffer.cuit,buffer.qtySalesCharged);
+			}
+		}
+		result = SUCCESS;
+	}
+	return result;
+}
+
+
+/**
+ * \brief Escribe los datos de los clientes en el archivo que recibe por parametro(modo texto). Agrega campo cantidad de ventas
+ * \param pFile FILE* puntero al archivo a cargar
+ * \param listClient LinkedList* puntero a la lista de clientes
+ * \return int Return (-1) ERROR - Si el puntero a LikedList es NULL o si el puntero al archivo es NULL o si no pudo escribir el cliente al archivo
+ * 					  (0) EXITO
+ */
+int parser_ClientQtySalesToCharge(FILE* pFile, LinkedList* list)
+{
+	int result = ERROR;
+	Client* pClient;
+	Client buffer;
+
+	if(pFile != NULL && list != NULL)
+	{
+		fprintf(pFile,"ID,NOMBRE,APELLIDO,CUIT,A COBRAR\n");
+		for(int i = 0; i< ll_len(list);i++)
+		{
+			pClient = (Client*)ll_get(list,i);
+			if(pClient != NULL
+					&& cli_getId(pClient,&buffer.idClient) == SUCCESS
+					&& cli_getName(pClient,buffer.name) == SUCCESS
+					&& cli_getLastName(pClient,buffer.lastName) == SUCCESS
+					&& cli_getCuit(pClient,buffer.cuit) == SUCCESS
+					&& cli_getQtySalesToCharge(pClient,&buffer.qtySalesToCharge)==SUCCESS)
+			{
+				fprintf(pFile,"%d,%s,%s,%s,%d\n",buffer.idClient,buffer.name,buffer.lastName,buffer.cuit,buffer.qtySalesToCharge);
 			}
 		}
 		result = SUCCESS;

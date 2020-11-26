@@ -23,7 +23,8 @@ typedef struct {
 	char name[NAME_LEN];
 	char lastName[NAME_LEN];
 	char cuit[CUIT_LEN];
-	int qtySalesByStatus;
+	int qtySalesCharged;
+	int qtySalesToCharge;
 }Client;
 
 Client* cli_new(void);
@@ -44,13 +45,23 @@ int cli_getLastName(Client* this, char* lastName);
 int cli_setCuit(Client* this, char* cuit);
 int cli_getCuit(Client* this, char* cuit);
 
-int cli_setQtySalesByStatus(Client* this,int qty);
-int cli_getQtySalesByStatus(Client* this,int* qty);
-
+int cli_setQtySalesCharged(Client* this,int qty);
+int cli_getQtySalesCharged(Client* this,int* qty);
+int cli_setQtySalesToCharge(Client* this,int qty);
+int cli_getQtySalesToCharge(Client* this,int* qty);
 
 int cli_printOne(void* this);
 void headerClient(void);
-int cli_loadAndAddData(LinkedList* listClient);
+Client* cli_loadAndAddData(LinkedList* listClient);
 int cli_cuitIsInList(LinkedList* listClient, char* cuit);
+
+
+/************************** AGREGADAS *****************************/
+
+int cli_sort(LinkedList* list,int option, int order);
+int cli_compareByName(void* first, void* second);
+int cli_compareByLastName(void* first, void* second);
+int cli_compareByCuit(void* first, void* second);
+int menuSortClient(void);
 
 #endif /* CLIENT_H_ */

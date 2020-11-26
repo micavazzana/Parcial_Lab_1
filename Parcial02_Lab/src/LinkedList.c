@@ -463,7 +463,7 @@ LinkedList* ll_subList(LinkedList* this,int from,int to)
     int i;
     void* pElement;
 
-    if(this != NULL && from >= 0 && from <= ll_len(this) && to >= 0 && to <= ll_len(this))
+    if(this != NULL && from >= 0 && from <= ll_len(this) && to >= 0 && to <= ll_len(this) && from < to)
     {
     	cloneArray = ll_newLinkedList();
     	if (cloneArray != NULL)

@@ -14,39 +14,33 @@
  * \return Return (-1)- ERROR
  * 				  (0) - EXITO
  */
-int info_qtySalesByClient(LinkedList* listSale, LinkedList* listClient, int choice)
+int info_qtySalesByClient(LinkedList* listSale, LinkedList* listClient, int choice, int (*pFuncSet)(Client*,int))
 {
 	int result = ERROR;
 	int i;
 	int qty = 0;
 	Client* pClient;
 	int bufferIdClient;
-	LinkedList* newList = NULL;
-	char status[15];
+	LinkedList* filteredList = NULL;
 
 	if(listSale != NULL && listClient != NULL)
 	{
-		newList = ll_newLinkedList();
+		filteredList = ll_newLinkedList();
+		filteredList = ll_clone(listSale);
+		ll_filter2(filteredList,sale_compareByStatus,&choice);
 		for (i = 0; i < ll_len(listClient); i++)
 		{
 			pClient = (Client*) ll_get(listClient,i);
 			if(pClient != NULL)
 			{
 				cli_getId(pClient,&bufferIdClient);
-				if (info_qtySalesById(listSale,&qty,choice,bufferIdClient) == SUCCESS && qty >= 0)
+				if (info_qtySalesById(filteredList,&qty,choice,bufferIdClient) == SUCCESS && qty >= 0)
 				{
-					cli_setQtySalesByStatus(pClient,qty);
-					result = ll_add(newList,pClient);
+					pFuncSet(pClient,qty);
+					result = SUCCESS;
 				}
 			}
 		}
-		if(choice == TO_CHARGE)
-		{
-			sprintf(status,"a cobrar.txt");
-		} else {
-			sprintf(status,"cobradas.txt");
-		}
-		controller_loadOrSaveFromTxt(newList,status,"w",parser_ClientQtySalesCharged);
 	}
 	return result;
 }
@@ -66,7 +60,6 @@ int info_qtySalesById(LinkedList* listSale, int* qty,int choice,int id)
 	int i;
 	int counter = 0;
 	Sale* pSale;
-	int status;
 	int bufferIdClient;
 
 	if (listSale != NULL && qty != NULL && (choice == TO_CHARGE || choice == CHARGED) && id > 0)
@@ -76,9 +69,8 @@ int info_qtySalesById(LinkedList* listSale, int* qty,int choice,int id)
 			pSale = (Sale*) ll_get(listSale,i);
 			if(pSale != NULL)
 			{
-				sale_getStatus(pSale,&status);
 				sale_getIdClient(pSale,&bufferIdClient);
-				if(status == choice && bufferIdClient == id)
+				if(bufferIdClient == id)
 				{
 					counter++;
 				}

@@ -59,11 +59,21 @@ int sale_getStatusTxt(Sale* this, char* status);
 int sale_printOne(void* this);
 void headerSale(void);
 void* findById(LinkedList* list, int id,int choiceList);
-int sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient,int* asignedId);
+Sale* sale_loadAndAddData(LinkedList* listSale, LinkedList* listClient);
 int sale_Edit(LinkedList* listSale, LinkedList* listClient, int (*pFunc)(Sale*,LinkedList*),char* msj, int status);
 int sale_EditFields(Sale* pSale, LinkedList* listClient);
 int sale_EditStatus(Sale* pSale, LinkedList* listClient);
 int sale_compareByStatus(void* this, void* arg);
 int sale_compareQtyPoster(void* pElement, void* arg);
+
+/************************** AGREGADAS *****************************/
+
+int sale_sort(LinkedList* list,int option, int order);
+int sale_compareByPosterQty(void* first, void* second);
+int sale_compareByFileName(void* first, void* second);
+int sale_compareByZone(void* first, void* second);
+int menuSortSale(void);
+int sale_compareZoneAndPosterQty(void* first, void* second);
+int sale_remove(LinkedList* listSale);
 
 #endif /* SALE_H_ */
